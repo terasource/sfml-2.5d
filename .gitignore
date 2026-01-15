@@ -1,0 +1,13 @@
+1/x64/   
+1/Debug/      
+1/Release/
+
+.vscode/
+.vs/
+
+*.exe
+*.obj
+*.pdb
+*.ilk
+*.user
+*.dll
