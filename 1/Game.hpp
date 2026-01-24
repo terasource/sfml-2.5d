@@ -1,7 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <vector>
-
+#include "player.hpp"
 
 class Game {
 public:
@@ -13,19 +13,17 @@ private:
   void update(sf::Time dt);
   void render();
 
+  Player mPlayer;
+
   sf::Vector2f mWindowSize;
   sf::Clock mClock;
+  sf::Time dt;
   sf::RenderWindow mWindow;
-  sf::Texture mCharacterTexture;
-  std::vector<sf::Texture> mTextures;
-  sf::Sprite mCharacter;
-  int currentFrame;
-  float mAnimationTimer;
-  float mAnimationSpeed;
   sf::View mView;
   sf::RectangleShape mBox;
   sf::Sprite mBackGround;
   sf::Texture mBackGroundTexture;
-  float mStopTimer;
-  float mWasMoving;
+  sf::Font mFont;
+  sf::Text mFpsText;
+
 };
