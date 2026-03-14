@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include "player.hpp"
+#include "TileMap.hpp"
 
 class Game {
 public:
@@ -14,6 +15,7 @@ private:
   void render();
 
   Player mPlayer;
+  TileMap map;
 
   sf::Vector2f mWindowSize;
   sf::Clock mClock;
@@ -26,4 +28,6 @@ private:
   sf::Font mFont;
   sf::Text mFpsText;
 
+
+  std::string jsonpath = "assets\\Sample map.json";
 };

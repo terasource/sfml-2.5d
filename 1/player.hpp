@@ -22,5 +22,6 @@ private:
     bool mWasMoving;
     bool mIsMoving;
     DirectionType mMovementDirection;
+    sf::FloatRect GetCharacterHitbox();
 
 };

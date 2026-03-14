@@ -29,8 +29,16 @@ Player::Player() :
     mAnimationHandler.mCharacterHairSprite.setScale(mDefaultScale);
     //armour
     mAnimationHandler.mCharacterArmourSprite.setScale(mDefaultScale);
+
 };
 
+
+sf::FloatRect Player::GetCharacterHitbox() {
+    auto pos = mAnimationHandler.mCharacterSprite.getPosition();
+
+
+    return sf::FloatRect({ pos.x + 20, pos.y + 25 }, { 15, 15 });
+};
 void Player::update(sf::Time& dt, bool hasFocus) {
 
     HandleInput(hasFocus);
