@@ -5,11 +5,14 @@
 #include <string>
 #include "Tile.hpp"
 #include <SFML/Graphics/Drawable.hpp>
+struct MapLayer {
+    std::vector<sf::VertexArray> mVertices;
+};
 
 struct TilesetData {
     int firstGid;
     sf::Texture mTexture;
-    sf::VertexArray mVertices;
+    //sf::VertexArray mVertices;
     sf::Vector2f mTileSize;
 };
 
@@ -24,5 +27,6 @@ protected:
 
 private:
     std::vector <TilesetData> TilesetsData;
+    std::vector <MapLayer> mapLayers;
 };
 

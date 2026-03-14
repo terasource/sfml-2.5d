@@ -5,7 +5,7 @@
 
 using json = nlohmann::json;
 
-void loadMap(const std::string& jsonpath, TileMap& map, int layer) {
+void loadMap(const std::string& jsonpath, TileMap& maps) {
 
     std::string pathPrefix = "assets/";
 
@@ -30,21 +30,23 @@ void loadMap(const std::string& jsonpath, TileMap& map, int layer) {
         float tsw = ts["tilewidth"];
         float tsh = ts["tileheight"];
 
-        if (!map.addTileset(firstGid, imagepath, sf::Vector2f{ tsw,tsh }));
+        if (!maps.addTileset(firstGid, imagepath, sf::Vector2f{ tsw,tsh }));
         //std::cout << "Tileset could not be added to the mwap!" << std::endl;
     }
 
-    //for (const auto& flayer : data["layers"]) {
+    for (const auto& flayer : data["layers"]) {
+        if (flayer["type"] != "tilelayer")
+            continue;
 
-    auto& flayer = data["layers"][layer];
+        //auto& flayer = data["layers"][layer];
 
-    //int datasize = data["layers"].size();
-    //std::cout << "size = " << datasize << std::endl;
+        //int datasize = data["layers"].size();
+        //std::cout << "size = " << datasize << std::endl;
 
-    std::vector<int> mapData = flayer["data"].get<std::vector<int>>();
+        std::vector<int> mapData = flayer["data"].get<std::vector<int>>();
+        int lw = flayer["width"];
+        int lh = flayer["height"];
 
-    int lw = flayer["width"];
-    int lh = flayer["height"];
-
-    map.buildMap(mapData, lw, lh);
+        maps.buildMap(mapData, lw, lh);
+    }
 }

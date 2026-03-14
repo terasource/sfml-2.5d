@@ -6,7 +6,7 @@
 #include <map>
 
 Player::Player() :
-    mDefaultPosition(300.f, 300.f), mDefaultScale({ 4.f, 4.f }),
+    mDefaultPosition(300.f, 300.f), mDefaultScale({ 2.5f, 2.5f }),
     speed(300.f),
     mAnimationType(AnimationType::Idle),
     mMovementDirection(DirectionType::Right) {
@@ -35,7 +35,6 @@ Player::Player() :
 
 sf::FloatRect Player::GetCharacterHitbox() {
     auto pos = mAnimationHandler.mCharacterSprite.getPosition();
-
 
     return sf::FloatRect({ pos.x + 20, pos.y + 25 }, { 15, 15 });
 };

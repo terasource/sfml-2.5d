@@ -7,7 +7,6 @@ TileMap::TileMap() {
 
 bool TileMap::addTileset(int firstGid, const std::string& imagePath, sf::Vector2f tileSize) {
     TilesetData tData;
-    tData.mVertices.setPrimitiveType(sf::PrimitiveType::Triangles);
     tData.firstGid = firstGid;
     tData.mTileSize = tileSize;
 
@@ -22,6 +21,10 @@ bool TileMap::addTileset(int firstGid, const std::string& imagePath, sf::Vector2
 }
 
 void TileMap::buildMap(std::vector<int>& mapData, int width, int height) {
+    MapLayer newLayer;
+    newLayer.mVertices.resize(TilesetsData.size());
+    for (size_t i = 0; i < TilesetsData.size(); i++)
+        newLayer.mVertices[i].setPrimitiveType(sf::PrimitiveType::Triangles);
 
     for (size_t i = 0; i < width; i++) {
         for (size_t j = 0; j < height; j++) {
@@ -31,10 +34,11 @@ void TileMap::buildMap(std::vector<int>& mapData, int width, int height) {
             if (gid == 0) continue;
 
             TilesetData* currentTileSet = nullptr;
-
-            for (size_t i = TilesetsData.size() - 1; i >= 0; i--) {
-                if (gid >= TilesetsData[i].firstGid) {
-                    currentTileSet = &TilesetsData[i];
+            int textureIndex = -1;
+            for (size_t k = TilesetsData.size() - 1; k >= 0; k--) {
+                if (gid >= TilesetsData[k].firstGid) {
+                    currentTileSet = &TilesetsData[k];
+                    textureIndex = k;
                     break;
                 }
             }
@@ -59,28 +63,31 @@ void TileMap::buildMap(std::vector<int>& mapData, int width, int height) {
             quad[2].texCoords = sf::Vector2f({ (row + 1) * x, (column + 1) * y });
             quad[3].texCoords = sf::Vector2f({ row * x, (column + 1) * y });
 
-            currentTileSet->mVertices.append(quad[0]);
-            currentTileSet->mVertices.append(quad[1]);
-            currentTileSet->mVertices.append(quad[2]);
+            newLayer.mVertices[textureIndex].append(quad[0]);
+            newLayer.mVertices[textureIndex].append(quad[1]);
+            newLayer.mVertices[textureIndex].append(quad[2]);
 
-            currentTileSet->mVertices.append(quad[2]);
-            currentTileSet->mVertices.append(quad[3]);
-            currentTileSet->mVertices.append(quad[0]);
+            newLayer.mVertices[textureIndex].append(quad[2]);
+            newLayer.mVertices[textureIndex].append(quad[3]);
+            newLayer.mVertices[textureIndex].append(quad[0]);
         }
     }
+    mapLayers.push_back(newLayer);
 }
 
 void TileMap::draw(sf::RenderTarget& target, sf::RenderStates state) const {
 
     state.transform *= getTransform();
 
-    for (auto& tileSet : TilesetsData) {
+    for (const auto& layer : mapLayers) {
 
-        if (tileSet.mVertices.getVertexCount() > 0) {
-            state.texture = &tileSet.mTexture;
-            target.draw(tileSet.mVertices, state);
+        for (size_t i = 0; i < TilesetsData.size(); i++) {
+
+            if (layer.mVertices[i].getVertexCount() > 0) {
+                state.texture = &TilesetsData[i].mTexture;
+                target.draw(layer.mVertices[i], state);
+            }
         }
-
     }
 }
 
