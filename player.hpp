@@ -7,6 +7,7 @@ public:
     void update(sf::Time& dt, bool hasFocus);
     void draw(sf::RenderWindow& mWindow);
     void HandleInput(bool hasFocus);
+    sf::Vector2f getPosition();
 
 private:
     void MovementAnimation(sf::Time& dt);

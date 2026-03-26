@@ -176,5 +176,10 @@ void Player::IdleAnimation(sf::Time& dt) {
     }
 }
 
+sf::Vector2f Player::getPosition() {
+    auto pos = mAnimationHandler.mCharacterSprite.getPosition();
+
+    return { pos.x, pos.y };
+}
 
 

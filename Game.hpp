@@ -3,6 +3,7 @@
 #include <vector>
 #include "player.hpp"
 #include "TileMap.hpp"
+#include "probs.hpp"
 
 class Game {
 public:
@@ -17,7 +18,8 @@ private:
   Player mPlayer;
   TileMap map;
 
-  sf::Vector2f mWindowSize;
+  static constexpr sf::Vector2u mWindowSize = { 960, 640 };
+
   sf::Clock mClock;
   sf::Time dt;
   sf::RenderWindow mWindow;
@@ -28,6 +30,8 @@ private:
   sf::Font mFont;
   sf::Text mFpsText;
 
+  probs mProbs;
 
   std::string jsonpath = "assets\\Sample map.json";
+
 };
