@@ -4,13 +4,17 @@
 
 
 struct prop {
-    int gid;
+    unsigned int gid;
 
     float x;
     float y;
 
     int height;
     int width;
+
+    bool flipH;
+    bool flipV;
+    bool flipD;
 
     std::string propPath;
 };

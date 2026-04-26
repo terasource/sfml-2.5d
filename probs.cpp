@@ -7,6 +7,10 @@
 */
 using json = nlohmann::json;
 
+const unsigned FLIPPED_HORIZONTALLY_FLAG = 0x80000000;
+const unsigned FLIPPED_VERTICALLY_FLAG = 0x40000000;
+const unsigned FLIPPED_DIAGONALLY_FLAG = 0x20000000;
+
 probs::probs() {}
 
 void probs::matchTextures() {
@@ -23,7 +27,9 @@ void probs::matchTextures() {
     json data = json::parse(ifs);
 
 
+    //seperate tiles
     for (const auto& dict : data["tilesets"]) {
+
 
         if (!dict.contains("tiles"))
             continue;
@@ -39,6 +45,12 @@ void probs::matchTextures() {
         }
     }
 
+
+    for (const auto& dict : data["tilesets"]) {
+        if (dict.contains("tiles"))
+            continue;
+    }
+
     for (const auto& proplayers : data["layers"]) {
         if (proplayers["type"] != "objectgroup") {
             continue;
@@ -50,7 +62,11 @@ void probs::matchTextures() {
             if (obj.find("gid") == obj.end()) continue;
 
             prop cprop;
-            cprop.gid = proplayers["objects"][i]["gid"];
+            unsigned int rawGid = obj["gid"].get<unsigned int>();
+            cprop.flipH = (rawGid & FLIPPED_HORIZONTALLY_FLAG) != 0;
+            cprop.flipV = (rawGid & FLIPPED_VERTICALLY_FLAG) != 0;
+            cprop.flipD = (rawGid & FLIPPED_DIAGONALLY_FLAG) != 0;
+            cprop.gid = rawGid & ~(FLIPPED_HORIZONTALLY_FLAG | FLIPPED_VERTICALLY_FLAG | FLIPPED_DIAGONALLY_FLAG);
 
             cprop.x = proplayers["objects"][i]["x"];
             cprop.y = proplayers["objects"][i]["y"];
@@ -58,6 +74,9 @@ void probs::matchTextures() {
             cprop.height = proplayers["objects"][i]["height"];
             cprop.width = proplayers["objects"][i]["width"];
 
+            /*
+            remove this at the next commit.
+            unnecessary second loop to match the gids with the tile paths but the first loop already does this correctly.
             for (const auto& proptilesets : data["tilesets"]) {
                 int currentfirstgid = proptilesets["firstgid"];
                 int current_tilecount = proptilesets["tilecount"];
@@ -66,6 +85,11 @@ void probs::matchTextures() {
                     cprop.propPath = probTileDict[localid + currentfirstgid];
                     break;
                 }
+            }
+            */
+
+            if (probTileDict.count(cprop.gid)) {
+                cprop.propPath = probTileDict[cprop.gid];
             }
 
             propList.props.push_back(cprop);
@@ -94,12 +118,29 @@ void probs::DrawProbs(sf::RenderWindow& mWindow) {
 
         if (propList.props[i].propPath.empty()) continue;
 
-        float px = propList.props[i].x;
-        float py = propList.props[i].y;
+        prop cprop = propList.props[i];
+        //bottom left
+        float px = cprop.x;
+        float py = cprop.y;
 
         sf::FloatRect bounds = propSprites[i].getLocalBounds();
+        //changing origin to center from top left.
+        propSprites[i].setOrigin({ bounds.size.x / 2 , bounds.size.y / 2 });
+        //but the tiled gives the coordinates based on bottom left so i need to arrange my origin(middle point of the tile) in order to bottom left can be put coordinates given by tiled correctly.
+        propSprites[i].setPosition({ px + bounds.size.x / 2 , py - bounds.size.y / 2 });
 
-        propSprites[i].setPosition({ px, py - bounds.size.y });
+        //then flipping is gonna be done from middle to prevent shifting.
+        if (cprop.flipH)
+            propSprites[i].setScale({ -1,1 });
+        if (cprop.flipV)
+            propSprites[i].setScale({ 1,-1 });
+        if (cprop.flipH && cprop.flipV)
+            propSprites[i].setRotation(sf::degrees(180));
+        if (cprop.flipH && cprop.flipD)
+            propSprites[i].setRotation(sf::degrees(90));
+        if (cprop.flipV && cprop.flipD)
+            propSprites[i].setRotation(sf::degrees(-90));
+
 
         /*
         std::cout <<

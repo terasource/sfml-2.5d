@@ -4,6 +4,7 @@ Release/
 assets/
 .vscode/
 .vs/
+.claude/
 
 *.exe
 *.obj
