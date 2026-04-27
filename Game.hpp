@@ -33,5 +33,5 @@ private:
   probs mProbs;
 
   std::string jsonpath = "assets\\Sample map.json";
-
+  float logTimer;
 };

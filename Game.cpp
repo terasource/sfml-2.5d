@@ -30,7 +30,7 @@ void Game::run() {
         processEvent();
 
         dt = mClock.restart();
-
+        //std::cout << dt.asSeconds();
         update(dt);
 
         render();
@@ -56,10 +56,16 @@ void Game::update(sf::Time dt) {
 
     mPlayer.update(dt, mWindow.hasFocus());
 
-    if (dt.asSeconds() > 0) {
+    logTimer += dt.asSeconds();
+
+    if (logTimer > 1.5f) {
         int fps = 1 / dt.asSeconds();
         mFpsText.setString("FPS: " + std::to_string(fps));
+        std::cout << "{" << mPlayer.getPosition().x << " ," << mPlayer.getPosition().y << " }" << std::endl;
+
+        logTimer = 0.0f;
     }
+
 }
 
 void Game::render() {

@@ -41,7 +41,7 @@ void AnimationHandler::AddAnimationFrame(AnimationType aType, DirectionType dTyp
 
 void AnimationHandler::UpdateAnimation(AnimationType type, DirectionType mMovementDirection) {
     if (animations[{type, mMovementDirection}].empty())
-        std::cout << "vector is empty";
+        std::cout << "animation is not valid";
     mCurrentFrame = 0;
     mCurrentTime = 0;
     const auto& currentRectangle = animations[{type, mMovementDirection}][mCurrentFrame];

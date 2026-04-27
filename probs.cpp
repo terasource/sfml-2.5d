@@ -30,6 +30,16 @@ void probs::matchTextures() {
     //seperate tiles
     for (const auto& dict : data["tilesets"]) {
 
+        if (dict.contains("image")) {
+            CollectionOfProps copropsinfo;
+            copropsinfo.firstgid = dict["firstgid"];
+            copropsinfo.tilecount = dict["tilecount"];
+            copropsinfo.imagePath = pathPrefix + dict["image"].get<std::string>();
+            copropsinfo.columns = dict["columns"];
+            copropsinfo.tilewidth = dict["tilewidth"];
+            copropsinfo.tileheight = dict["tileheight"];
+            propList.coprops.push_back(copropsinfo);
+        }
 
         if (!dict.contains("tiles"))
             continue;
@@ -43,13 +53,9 @@ void probs::matchTextures() {
 
             probTileDict[localid + firstgid] = pathPrefix + dict["tiles"][j]["image"].get<std::string>();
         }
+
     }
 
-
-    for (const auto& dict : data["tilesets"]) {
-        if (dict.contains("tiles"))
-            continue;
-    }
 
     for (const auto& proplayers : data["layers"]) {
         if (proplayers["type"] != "objectgroup") {
@@ -74,22 +80,29 @@ void probs::matchTextures() {
             cprop.height = proplayers["objects"][i]["height"];
             cprop.width = proplayers["objects"][i]["width"];
 
-            /*
-            remove this at the next commit.
-            unnecessary second loop to match the gids with the tile paths but the first loop already does this correctly.
-            for (const auto& proptilesets : data["tilesets"]) {
-                int currentfirstgid = proptilesets["firstgid"];
-                int current_tilecount = proptilesets["tilecount"];
-                if (cprop.gid >= currentfirstgid && cprop.gid < (currentfirstgid + current_tilecount)) {
-                    int localid = cprop.gid - currentfirstgid;
-                    cprop.propPath = probTileDict[localid + currentfirstgid];
-                    break;
-                }
-            }
-            */
 
             if (probTileDict.count(cprop.gid)) {
                 cprop.propPath = probTileDict[cprop.gid];
+            }
+            else {
+                for (const auto& info : propList.coprops) {
+                    if (cprop.gid >= info.firstgid && cprop.gid < info.firstgid + info.tilecount) {
+                        unsigned int localid = cprop.gid - info.firstgid;
+                        int col = localid % info.columns;
+                        int row = localid / info.columns;
+                        cprop.isGridProp = true;
+                        cprop.propPath = info.imagePath;
+                        cprop.textureRect = sf::IntRect({ col * info.tilewidth, row * info.tileheight }, { info.tilewidth, info.tileheight });
+                        /* test (3)
+                            std::cout << "grid prop gid=" << cprop.gid
+                            << " path=" << cprop.propPath
+                            << " cell=(" << col << "," << row << ")"
+                            << " rect=(" << col * info.tilewidth << "," << row * info.tileheight << ")"
+                            << std::endl;
+                        */
+                        break;
+                    }
+                }
             }
 
             propList.props.push_back(cprop);
@@ -108,11 +121,16 @@ void probs::matchTextures() {
             }
         }
         sf::Sprite csprite(propTextures[propList.props[i].propPath]);
+        if (propList.props[i].isGridProp)
+            csprite.setTextureRect(propList.props[i].textureRect);
+
+
         propSprites.push_back(csprite);
     }
 }
 
 void probs::DrawProbs(sf::RenderWindow& mWindow) {
+    // test (1)
     //std::cout << "prop draw function is working! " << std::endl;
     for (int i = 0; i < propSprites.size(); i++) {
 
@@ -143,6 +161,7 @@ void probs::DrawProbs(sf::RenderWindow& mWindow) {
 
 
         /*
+        test (2)
         std::cout <<
             "path = " << propList.props[i].propPath <<
             " x = " << propList.props[i].x <<
