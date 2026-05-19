@@ -1,5 +1,5 @@
 #include "probs.hpp"
-#include "include/nlohmann/json.hpp"
+#include <nlohmann/json.hpp>
 #include <fstream>
 #include <iostream>
 /*

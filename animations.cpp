@@ -11,13 +11,13 @@ AnimationHandler::AnimationHandler() :
     mCharacterArmourTexture(), mCharacterArmourSprite(mCharacterArmourTexture),
     mCurrentFrame(0), mCurrentTime(0.f), mAnimationTime(0.5)
 {
-    if (!mCharacterTexture.loadFromFile("assets\\characters\\char_a_p1_0bas_humn_v00.png")) {
+    if (!mCharacterTexture.loadFromFile("assets/characters/char_a_p1_0bas_humn_v00.png")) {
         std::cout << "Character texture cannot be loaded!" << std::endl;
     }
-    if (!mCharacterHairTexture.loadFromFile("assets\\characters\\char_a_p1_4har_bob1_v03.png")) {
+    if (!mCharacterHairTexture.loadFromFile("assets/characters/char_a_p1_4har_bob1_v03.png")) {
         std::cout << "Hair texture cannot be loaded!" << std::endl;
     }
-    if (!mCharacterArmourTexture.loadFromFile("assets\\characters\\char_a_p1_1out_pfpn_v05.png")) {
+    if (!mCharacterArmourTexture.loadFromFile("assets/characters/char_a_p1_1out_pfpn_v05.png")) {
         std::cout << "Armour texture cannot be loaded! " << std::endl;
     }
 };

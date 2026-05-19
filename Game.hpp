@@ -17,6 +17,7 @@ private:
 
   Player mPlayer;
   TileMap map;
+  TileAnimation animations;
 
   static constexpr sf::Vector2u mWindowSize = { 960, 640 };
 

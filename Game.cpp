@@ -15,7 +15,8 @@ Game::Game() :
     mView(sf::FloatRect({ 0.f, 0.f }, sf::Vector2f(mWindowSize)))
 {
     mWindow.setFramerateLimit(0);
-    loadMap(jsonpath, map);
+
+    loadMapData(jsonpath, map);
 
     mProbs.matchTextures();
 
@@ -72,7 +73,10 @@ void Game::render() {
     mWindow.clear();
     mWindow.setView(mView);
     mView.setCenter(mPlayer.getPosition());
+
     mWindow.draw(map);
+    map.update(dt);
+
     mProbs.DrawProbs(mWindow);
     mPlayer.draw(mWindow);
 

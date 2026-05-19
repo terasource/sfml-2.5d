@@ -1,11 +1,10 @@
 #include "TileMap.hpp"
 #include <fstream>
 #include <iostream>
-#include "include/nlohmann/json.hpp"
+#include <nlohmann/json.hpp>
 
 using json = nlohmann::json;
-
-void loadMap(const std::string& jsonpath, TileMap& maps) {
+void loadMapData(const std::string& jsonpath, TileMap& maps) {
 
     std::string pathPrefix = "assets/";
 
@@ -21,9 +20,29 @@ void loadMap(const std::string& jsonpath, TileMap& maps) {
     int th = data["tileheight"];
 
     for (const auto& ts : data["tilesets"]) {
+
+        int firstGid = ts["firstgid"];
+
         if (!ts.contains("image"))
             continue;
-        int firstGid = ts["firstgid"];
+
+        if (ts.contains("tiles")) {
+
+            for (const auto& tile : ts["tiles"]) {
+
+                if (!tile.contains("animation"))
+                    continue;
+
+                TileAnimation animation;
+                unsigned int animgid;
+                for (const auto& anim : tile["animation"]) {
+                    animgid = firstGid + tile["id"].get<int>();
+                    animation.frames.push_back({ anim["duration"], anim["tileid"] });
+                }
+                maps.AddAnimation(animgid, animation);
+            }
+        }
+
         std::string jsonipath = ts["image"];
         std::string imagepath = pathPrefix + jsonipath;
 
@@ -31,19 +50,18 @@ void loadMap(const std::string& jsonpath, TileMap& maps) {
         float tsh = ts["tileheight"];
 
         if (!maps.addTileset(firstGid, imagepath, sf::Vector2f{ tsw,tsh }));
-        //std::cout << "Tileset could not be added to the mwap!" << std::endl;
+        // std::cout << "Tileset could not be added to the mwap!" << std::endl; --ignore for now
+
     }
 
     for (const auto& flayer : data["layers"]) {
+
         if (flayer["type"] != "tilelayer")
             continue;
 
-        //auto& flayer = data["layers"][layer];
-
-        //int datasize = data["layers"].size();
-        //std::cout << "size = " << datasize << std::endl;
 
         std::vector<int> mapData = flayer["data"].get<std::vector<int>>();
+
         int lw = flayer["width"];
         int lh = flayer["height"];
 
