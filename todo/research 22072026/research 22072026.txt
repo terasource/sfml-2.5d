@@ -1,0 +1,32 @@
+research
+
+why the delta time's behaivour is increasing. 
+
+the bug here was the animation speed is getting increased by time no matter what i decide it to be.
+and the reason is we are passing globalTime to update function which is getting its value from dt as globalTime += dt.asSeconds();
+
+but this means the globalTime always increases. but we want it to be resetted after a animation is displayed. actually it resets but the
+main issue here is its start value is increasing. for example it starts with 1 1.5 3 ... 10 and becomes 0 because the animationtime is 10
+
+but the next iteration starts with a bigger value the than previous like 1.1 1.2 etc. and this keeps increasing all the time. and this means
+the animation time is comes quickly and the animation is performed really fast.
+
+but i couldnt figure out why this happens. idk if this is the problem or bug but when i pass the exact dt itself to update function
+the animation speed bug is fixed. 
+
+lets try one more time.
+and
+no it fucking did not. fkk why am i writing this then. nooooooooooo.
+
+okay i just forget it as previous verison so it really fixes the fast animation bug but there is a another error.
+
+it is: now the animation time threshold should be a really tiny value like 0.002 cause we use dt.asSeconds() as a timer and the dt is a 
+clock.restart() so it restarts after every frame is rendered so the time value is a bit tiny.
+
+idk what to do and what is the best solution for this. i actually seperate the time control mechanisms. i think i can use the
+fixed time steps for only mathematical/physical calculations, collisions and etc
+,and the delta time for movement vector, animations speed etc.
+
+i think i gotta research this or the convenient method and figure how should i code it out. 
+
+okay im giving this a week. lets just try to solve it in a week.

@@ -22,10 +22,15 @@ private:
   static constexpr sf::Vector2u mWindowSize = { 960, 640 };
 
   sf::Clock mClock;
-  sf::Time dt;
+  sf::Time globalTime;
+  static constexpr unsigned int updatesPerSecond = 60;
+  static constexpr sf::Time timePerTick = sf::seconds(1.0f / updatesPerSecond);
+  sf::Time lastFrameDrawed = sf::Time::Zero;
+
+  sf::Time fpsTimer;
+
   sf::RenderWindow mWindow;
   sf::View mView;
-  sf::RectangleShape mBox;
   sf::Sprite mBackGround;
   sf::Texture mBackGroundTexture;
   sf::Font mFont;
@@ -34,5 +39,5 @@ private:
   probs mProbs;
 
   std::string jsonpath = "assets\\Sample map.json";
-  float logTimer;
+
 };

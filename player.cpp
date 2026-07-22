@@ -5,6 +5,8 @@
 #include <iostream>
 #include <map>
 
+//refactor with relative positions to charactor for its childs. sceneNode
+//consider the player as entity and turn into a entity class.  
 Player::Player() :
     mDefaultPosition(300.f, 300.f), mDefaultScale({ 2.5f, 2.5f }),
     speed(300.f),
@@ -42,9 +44,9 @@ void Player::update(sf::Time& dt, bool hasFocus) {
 
     HandleInput(hasFocus);
 
-    IdleAnimation(dt);
+    IdleAnimation();
 
-    auto movementFactor = movement * dt.asSeconds();
+    auto movementFactor = movement;
     auto characterPosition = mAnimationHandler.mCharacterSprite.getPosition();
 
     mAnimationHandler.mCharacterSprite.move(movementFactor);
@@ -76,12 +78,12 @@ void Player::HandleInput(bool hasFocus) {
 
     if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) {
         mAnimationType = AnimationType::Walk;
-        speed = 250.f;
-        mAnimationHandler.mAnimationSpeed = 0.1f;
+        speed = 5.0f;
+        mAnimationHandler.mAnimationSpeed = 0.002f;
     }
     else {
-        speed = 400.f;
-        mAnimationHandler.mAnimationSpeed = 0.15f;
+        speed = 7.5f;
+        mAnimationHandler.mAnimationSpeed = 1.f;
         if (!(mAnimationType == AnimationType::Run)) {
             mAnimationType = AnimationType::Run;
             mAnimationHandler.UpdateAnimation(mAnimationType, mMovementDirection);
@@ -130,8 +132,8 @@ void Player::MovementAnimation(sf::Time& dt) {
         }
         else {
             mAnimationHandler.mAnimationTime += dt.asSeconds();
-            //std::cout << "animation timer = " << mAnimationHandler.mAnimationTime << std::endl;
-            //std::cout << "animation speed = " << mAnimationHandler.mAnimationSpeed << std::endl;
+            std::cout << "animation timer = " << mAnimationHandler.mAnimationTime << std::endl;
+            std::cout << "animation speed = " << mAnimationHandler.mAnimationSpeed << std::endl;
             if (mAnimationHandler.mAnimationTime >= mAnimationHandler.mAnimationSpeed) {
                 mAnimationHandler.mAnimationTime = 0;
                 mAnimationHandler.mCurrentFrame++;
@@ -168,7 +170,7 @@ void Player::MovementAnimation(sf::Time& dt) {
     mWasMoving = mIsMoving;
 };
 
-void Player::IdleAnimation(sf::Time& dt) {
+void Player::IdleAnimation() {
     if (!mIsMoving && mStopTimer > 0.5)
     {
         mAnimationType = AnimationType::Idle;

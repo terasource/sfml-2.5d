@@ -30,9 +30,25 @@ void Game::run() {
     while (mWindow.isOpen()) {
         processEvent();
 
-        dt = mClock.restart();
-        //std::cout << dt.asSeconds();
-        update(dt);
+        sf::Time dt = mClock.restart();
+        globalTime += dt;
+        lastFrameDrawed += dt;
+
+        while (lastFrameDrawed > timePerTick) {
+            lastFrameDrawed -= timePerTick;
+            processEvent();
+            update(dt);
+        }
+
+        fpsTimer += dt;
+
+        if (fpsTimer.asSeconds() > 1.5f) {
+            int fps = 1.0f / dt.asSeconds();
+            mFpsText.setString("FPS: " + std::to_string(fps));
+            std::cout << "{" << mPlayer.getPosition().x << " ," << mPlayer.getPosition().y << " }" << std::endl;
+
+            fpsTimer = sf::Time::Zero;
+        }
 
         render();
     }
@@ -54,19 +70,9 @@ void Game::processEvent() {
 }
 
 void Game::update(sf::Time dt) {
-
     mPlayer.update(dt, mWindow.hasFocus());
 
-    logTimer += dt.asSeconds();
-
-    if (logTimer > 1.5f) {
-        int fps = 1 / dt.asSeconds();
-        mFpsText.setString("FPS: " + std::to_string(fps));
-        std::cout << "{" << mPlayer.getPosition().x << " ," << mPlayer.getPosition().y << " }" << std::endl;
-
-        logTimer = 0.0f;
-    }
-
+    map.update(dt);
 }
 
 void Game::render() {
@@ -75,7 +81,6 @@ void Game::render() {
     mView.setCenter(mPlayer.getPosition());
 
     mWindow.draw(map);
-    map.update(dt);
 
     mProbs.DrawProbs(mWindow);
     mPlayer.draw(mWindow);

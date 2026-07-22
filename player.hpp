@@ -11,7 +11,7 @@ public:
 
 private:
     void MovementAnimation(sf::Time& dt);
-    void IdleAnimation(sf::Time& dt);
+    void IdleAnimation();
 
     AnimationHandler mAnimationHandler;
     AnimationType mAnimationType;

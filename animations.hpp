@@ -3,6 +3,8 @@
 #include <map>
 #include <vector>
 
+// turn into a template class for every animations.
+
 enum class DirectionType {
     Up = 1,
     Left = 3,

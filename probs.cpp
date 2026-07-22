@@ -31,6 +31,7 @@ void probs::matchTextures() {
     for (const auto& dict : data["tilesets"]) {
 
         if (dict.contains("image")) {
+
             CollectionOfProps copropsinfo;
             copropsinfo.firstgid = dict["firstgid"];
             copropsinfo.tilecount = dict["tilecount"];
