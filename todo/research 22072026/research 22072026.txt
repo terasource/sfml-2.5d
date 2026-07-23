@@ -30,3 +30,7 @@ fixed time steps for only mathematical/physical calculations, collisions and etc
 i think i gotta research this or the convenient method and figure how should i code it out. 
 
 okay im giving this a week. lets just try to solve it in a week.
+
+
+i think the problem is how the fixed time step works. in my insights the lag happens at the gametime and the time accumulator
+renders more than normal so the animations getting fast.

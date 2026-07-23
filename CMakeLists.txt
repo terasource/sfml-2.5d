@@ -14,6 +14,10 @@ if(WIN32)
     # set(nlohmann_json_DIR "C:/Kutuphaneler/nlohmann_json/lib/cmake/nlohmann_json")
 endif()
 
+if(APPLE)
+    list(APPEND CMAKE_PREFIX_PATH "opt/homebrew")
+endif()
+
 # --- Kütüphaneleri Bul ---
 # SFML 3.x
 find_package(SFML 3.0 REQUIRED COMPONENTS Graphics Window System Audio)

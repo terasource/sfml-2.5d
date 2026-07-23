@@ -83,7 +83,7 @@ void Player::HandleInput(bool hasFocus) {
     }
     else {
         speed = 7.5f;
-        mAnimationHandler.mAnimationSpeed = 1.f;
+        mAnimationHandler.mAnimationSpeed = 0.001f;
         if (!(mAnimationType == AnimationType::Run)) {
             mAnimationType = AnimationType::Run;
             mAnimationHandler.UpdateAnimation(mAnimationType, mMovementDirection);
