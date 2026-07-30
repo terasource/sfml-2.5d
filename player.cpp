@@ -57,11 +57,11 @@ void Player::update(sf::Time& dt, bool hasFocus) {
     IdleAnimation();
 
     auto movementFactor = movement;
+    mAnimationHandler.mCharacterSprite.move(movementFactor);
+    
     auto characterPosition = mAnimationHandler.mCharacterSprite.getPosition();
-
     //std::cout << "movement factor = {x: " << movementFactor.x << " y: "<< movementFactor.y << " }" <<std::endl;
     //std::cout << "character position  = {x: " << characterPosition.x << " y: "<< characterPosition.y << " }" <<std::endl;
-    mAnimationHandler.mCharacterSprite.move(movementFactor);
     mAnimationHandler.mCharacterHairSprite.setPosition(characterPosition);
     mAnimationHandler.mCharacterArmourSprite.setPosition(characterPosition);
 
@@ -91,12 +91,12 @@ void Player::HandleInput(bool hasFocus) {
 
     if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) {
         mAnimationType = AnimationType::Walk;
-        speed = 250.0f * dt.asSeconds();
-        mAnimationHandler.mAnimationSpeed = speed / 0.4f;
+        speed = 4.0f;
+        mAnimationHandler.mAnimationSpeed = 0.10f;
     }
     else {
-        speed = 400.0f * dt.asSeconds();
-        mAnimationHandler.mAnimationSpeed = speed / 0.4f;
+        speed = 6.0f;
+        mAnimationHandler.mAnimationSpeed = 0.10f;
         if (!(mAnimationType == AnimationType::Run)) {
             mAnimationType = AnimationType::Run;
             mAnimationHandler.UpdateAnimation(mAnimationType, mMovementDirection);
@@ -149,9 +149,9 @@ void Player::MovementAnimation(sf::Time& dt) {
         else {
             mAnimationHandler.mAnimationTime += dt.asSeconds();
             //std::cout << "animation timer = " << mAnimationHandler.mAnimationTime << std::endl;
-            std::cout << "animation speed = " << mAnimationHandler.mAnimationSpeed << std::endl;
+            //std::cout << "animation speed = " << mAnimationHandler.mAnimationSpeed << std::endl;
             if (mAnimationHandler.mAnimationTime >= mAnimationHandler.mAnimationSpeed) {
-                            std::cout << "animation timer = " << mAnimationHandler.mAnimationTime << std::endl;
+            //std::cout << "animation timer = " << mAnimationHandler.mAnimationTime << std::endl;
                 mAnimationHandler.mAnimationTime = 0;
                 mAnimationHandler.mCurrentFrame++;
             }

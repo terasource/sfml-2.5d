@@ -64,4 +64,35 @@ i need to seperate the time mechanisms as delta time for movement or etc and fix
 nice.
 ill try to research and learn it by myself and if im not satisfied with it, i will maybe consider make an llm analyze this. ty.
 
- 
+im now reading the https://gafferongames.com/post/fix_your_timestep/ article in order to understand the logic behind fixing timesteps and numerical integration methods in order to
+implement them into my own game engine. how to converge  the error ratio to 0.
+
+makaleden anladigim sey su; bizim bir oyun dongumuz var belirli bir fpste calisan
+bu fps 60 olabilir 30 olabilir 120 olabilir 75 olabilir neyse.
+bu rakamlar bizim saniyede kac defa oyunu cizdigimiz kac kare cizdigimizi anlatir
+ ve bu bilgisayarin gucune baglidir islem yapma hizina kapasitesin  ama bizim hesaplamalarimizin 
+ evrensel olmasi icin bu cizilen kare sayisinin bizim fizik hesaplamalarimizi etkilememesi gerekir ama 
+ bu dumduz baktiginda zordur cunku eger oyun 120 kare ciziyorsa bu demektir ki 120 kere oyunun kodlari 
+ calisiyor update render processevent vs ama 120 kere calisan bir update fonksiyonu 60 kere calisan bir 
+ update fonksiyonundan fazla hesaplama yapar ve daha fazla yakinsar farkli sonuc bulur farkli parametrelere 
+ bagli olarak. burada yapmamiz gereken sey su. bir katsayi bulmak ve bunu esitleyici olarak kullanmak. biz bu 
+ katsayiya dt diyoruz aslinda dt dedigimiz sey bir onceki frame ve bir sonraki frame arasinda gecen cok kucuk bir sure. 
+ eger saniyede 60 kare ciziyorsak ve bu sabitse 1/60 olur dt. ivme ve hiz hesaplamalarinda bunu kullaniriz karakter hareket 
+ ederken 10 hizi varsa ve fpstenj bagimsiz olursa bu 60 fps calisan bir oyunda 600 ilerlerken 120fps de 1200 ilerler ve bu 
+ istenilen bir sey deigl bu yuzden bu movement vectoru dt ile carpip bu sayilari esitleriz 120 icin 1200 * 1/120 = 10 
+ 60 icin 600 * 1/60 = 10 olur ve esitlenir ama bu evrensel degildir tam olakrak daha dogrusu sadece fpsin sabit oldugu
+ kosulda evrenseldir fps cok fazla oynak oldugunda bu degisebilir ve noktali sayilarda hassasiyet kaybi vs yasanabilir 
+ makalede bu delta timein bir yerlerde bozulacagini soyluyor ama nasil bir bozulma bilmiyorum. fixed time step ise fizik 
+ motorunun ve render dongusunun esitlenmesini saglar burada fixed time stepten kasit su. iki frame arasindaki sure alinir 
+ eger bu belirledigimiz dtden buyuk ise fizik motoru geride kalmis demektir ve biz bunu bir time accumulator yardimiyla 
+ render motoruna esitleriz. eger fizik motoru 30 render 60fps calisirsa biz fizik motorunu fazladan islem yaparak 60a 
+ esitleriz bu sayede birlikte gider ve makaledeki son kisimda da su var. dt hic bir zaman tam olmaz hep noktali sayi olur 
+ ama biz time accumulatorde cikarma islemi kullaniyoruz burada 60fps tam sayiya esitlemeye calistigimizda cok kucuk bile 
+ olsa bir arta kalan zaman olacak bunu da bir sonraki dongunun zamanina ekliyoruz o zaman kucuk kucuk birikip oyunu bozuk 
+ hissttirmesin diye. bunlari anladim. benim yanlis yaptigim kisim ise suydu ben fixed time step kullanirken update(dt) 
+ olarak geciyordum ama burada kullanmam gereken sey dt degil timepertickti tamam biz time accumulatorde fizik motorunu 
+ render motoruna esitliyoruz ama burada dt hala fpse bagli bir cikti uretiyor 2 frame arasindaki gecen sure ama fps ne kadar 
+ coksa dt o kdaar kuck olur ters oranti eger ben update fonksiyonunu bu parametreyle cagirirsam animationu da etkilemis olurum 
+ cunku animationtime degiskeni dtye bagli ve dt ne kadar kucuk olursa. animation frameler arasi o kadar kucuk olur ve hizli gecer 
+ animasyon tam da bu bugu yasiyordum o yuzden benim dt olarak timepertick vermem gerekiyor ki her framede animation frame time sabit
+  kalsin fpsten bagimsiz. 
