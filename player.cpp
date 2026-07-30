@@ -4,6 +4,8 @@
 #include <math.h>
 #include <iostream>
 #include <map>
+#include <cmath>
+
 
 //refactor with relative positions to charactor for its childs. sceneNode
 //consider the player as entity and turn into a entity class.  
@@ -11,7 +13,7 @@ Player::Player() :
     mDefaultPosition(300.f, 300.f), mDefaultScale({ 2.5f, 2.5f }),
     speed(300.f),
     mAnimationType(AnimationType::Idle),
-    mMovementDirection(DirectionType::Right) {
+    mMovementDirection(DirectionType::Right){
 
 
     //idle animation
@@ -32,6 +34,10 @@ Player::Player() :
     //armour
     mAnimationHandler.mCharacterArmourSprite.setScale(mDefaultScale);
 
+    mAnimationHandler.mCharacterSprite.setTextureRect(mAnimationHandler.animations[{mAnimationType, mMovementDirection}][mAnimationHandler.mCurrentFrame]);
+    mAnimationHandler.mCharacterHairSprite.setTextureRect(mAnimationHandler.animations[{mAnimationType, mMovementDirection}][mAnimationHandler.mCurrentFrame]);
+    mAnimationHandler.mCharacterArmourSprite.setTextureRect(mAnimationHandler.animations[{mAnimationType, mMovementDirection}][mAnimationHandler.mCurrentFrame]);
+
 };
 
 
@@ -40,7 +46,11 @@ sf::FloatRect Player::GetCharacterHitbox() {
 
     return sf::FloatRect({ pos.x + 20, pos.y + 25 }, { 15, 15 });
 };
+
+
 void Player::update(sf::Time& dt, bool hasFocus) {
+
+    this->dt = dt;
 
     HandleInput(hasFocus);
 
@@ -49,9 +59,12 @@ void Player::update(sf::Time& dt, bool hasFocus) {
     auto movementFactor = movement;
     auto characterPosition = mAnimationHandler.mCharacterSprite.getPosition();
 
+    //std::cout << "movement factor = {x: " << movementFactor.x << " y: "<< movementFactor.y << " }" <<std::endl;
+    //std::cout << "character position  = {x: " << characterPosition.x << " y: "<< characterPosition.y << " }" <<std::endl;
     mAnimationHandler.mCharacterSprite.move(movementFactor);
     mAnimationHandler.mCharacterHairSprite.setPosition(characterPosition);
     mAnimationHandler.mCharacterArmourSprite.setPosition(characterPosition);
+
     MovementAnimation(dt);
 
 };
@@ -70,7 +83,7 @@ void Player::HandleInput(bool hasFocus) {
     if (!hasFocus) {
         movement = { 0,0 };
         mIsMoving = false;
-        AnimationType::Idle;
+        mAnimationType = AnimationType::Idle;
 
         return;
     }
@@ -78,12 +91,12 @@ void Player::HandleInput(bool hasFocus) {
 
     if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) {
         mAnimationType = AnimationType::Walk;
-        speed = 5.0f;
-        mAnimationHandler.mAnimationSpeed = 0.002f;
+        speed = 250.0f * dt.asSeconds();
+        mAnimationHandler.mAnimationSpeed = speed / 0.4f;
     }
     else {
-        speed = 7.5f;
-        mAnimationHandler.mAnimationSpeed = 0.001f;
+        speed = 400.0f * dt.asSeconds();
+        mAnimationHandler.mAnimationSpeed = speed / 0.4f;
         if (!(mAnimationType == AnimationType::Run)) {
             mAnimationType = AnimationType::Run;
             mAnimationHandler.UpdateAnimation(mAnimationType, mMovementDirection);
@@ -112,15 +125,18 @@ void Player::HandleInput(bool hasFocus) {
         mIsMoving = true;
     }
 
-
-    float magnitude = std::sqrt(movement.x * movement.x + movement.y * movement.y);
+    //check the difference between these 2.
+    float magnitude = std::sqrt((movement.x * movement.x) + (movement.y * movement.y));
+    double mag2d = std::hypot(movement.x, movement.y); 
     if (magnitude > 0) {
-        movement /= magnitude;
+        movement.x /= mag2d;
+        movement.y /= mag2d;
+        
         movement *= speed;
     }
 }
 void Player::MovementAnimation(sf::Time& dt) {
-
+//this function should only be responsible for movementanimation but now it loads the sprite too.
     if (mIsMoving) {
         mStopTimer = 0;
         // mAnimationHandler.mAnimationSpeed = 40.f / speed;
@@ -132,9 +148,10 @@ void Player::MovementAnimation(sf::Time& dt) {
         }
         else {
             mAnimationHandler.mAnimationTime += dt.asSeconds();
-            std::cout << "animation timer = " << mAnimationHandler.mAnimationTime << std::endl;
+            //std::cout << "animation timer = " << mAnimationHandler.mAnimationTime << std::endl;
             std::cout << "animation speed = " << mAnimationHandler.mAnimationSpeed << std::endl;
             if (mAnimationHandler.mAnimationTime >= mAnimationHandler.mAnimationSpeed) {
+                            std::cout << "animation timer = " << mAnimationHandler.mAnimationTime << std::endl;
                 mAnimationHandler.mAnimationTime = 0;
                 mAnimationHandler.mCurrentFrame++;
             }
@@ -150,6 +167,7 @@ void Player::MovementAnimation(sf::Time& dt) {
                 mAnimationHandler.mCharacterArmourSprite.setTextureRect(mAnimationHandler.animations[{mAnimationType, mMovementDirection}][mAnimationHandler.mCurrentFrame]);
 
             }
+            
         }
 
     }
@@ -158,6 +176,7 @@ void Player::MovementAnimation(sf::Time& dt) {
         mStopTimer += dt.asSeconds();
         if (mStopTimer >= 0.15)
             mAnimationHandler.mCurrentFrame = 0;
+        //thats why, these parts should not be there i guess. no actullay this are for the animation but i just need to predefine them one time before here. this is the first define thats why.
 
         if (mAnimationHandler.mCurrentFrame < mAnimationHandler.animations[{mAnimationType, mMovementDirection}].size()) {
             mAnimationHandler.mCharacterSprite.setTextureRect(mAnimationHandler.animations[{mAnimationType, mMovementDirection}][mAnimationHandler.mCurrentFrame]);

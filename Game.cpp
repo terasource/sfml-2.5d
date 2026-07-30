@@ -34,12 +34,14 @@ void Game::run() {
         globalTime += dt;
         lastFrameDrawed += dt;
 
-        while (lastFrameDrawed > timePerTick) {
+        
+        while (lastFrameDrawed < timePerTick) {
             lastFrameDrawed -= timePerTick;
             processEvent();
             update(dt);
         }
 
+        update(dt);
         fpsTimer += dt;
 
         if (fpsTimer.asSeconds() > 1.5f) {
@@ -53,6 +55,7 @@ void Game::run() {
         render();
     }
 }
+
 
 void Game::processEvent() {
     while (const std::optional event = mWindow.pollEvent()) {
