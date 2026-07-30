@@ -31,6 +31,37 @@ i think i gotta research this or the convenient method and figure how should i c
 
 okay im giving this a week. lets just try to solve it in a week.
 
+23/07/2026
 
 i think the problem is how the fixed time step works. in my insights the lag happens at the gametime and the time accumulator
 renders more than normal so the animations getting fast.
+
+yea it seems like it happens when the fps is got spiked down to 500 from around 4500 on my m5 mac i think
+this should be a expected result based on accumulator behaivour but it is not how it should be.=
+
+the solution i came up with probably removing the render from the fixed time steps. 
+fixed time steps should only be used for physical calculations and like etc.
+i will try this when i get home after work.
+
+the bug occurs when the animation timer is bigger than animation speed and not resetted.
+
+omg i guess the bug is not about the animation timer and speed or something different.
+the issue in the fixed time steps. we are using time accumulator but inside of it there are only processEvent and update methods
+the animations is rendered but render() function but the render() function itself is outside of the accumulator. when i put it inside
+it doesnt work because there is no fps spike or something and the accumulator is not working. when i put it outside its always works per tick
+so it works more then the update function.
+
+
+also fix the clothes bug. clothes come behind after changing direction of movement.
+
+
+well i guess the clothes bugs also happen because of fixed time step. actually not because of fixed time step. i was removed the delta time multiplication
+from the speed when i was implementing the fixed time steps but i guess it wasjust a wrong implementation choice. now i added it back and it seem it is working normally
+but i wonder why and thats why i need to research that and i assume that i should only use fixed time steps for mathematical and physical calculations as i mentioned and that proved it
+
+i need to seperate the time mechanisms as delta time for movement or etc and fixed time steps for collisons and mathematical physical calculations
+
+nice.
+ill try to research and learn it by myself and if im not satisfied with it, i will maybe consider make an llm analyze this. ty.
+
+ 
