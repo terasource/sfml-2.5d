@@ -5,22 +5,37 @@
 #include <iostream>
 
 
-AnimationHandler::AnimationHandler() :
-    mCharacterTexture(), mCharacterSprite(mCharacterTexture),
-    mCharacterHairTexture(), mCharacterHairSprite(mCharacterHairTexture),
-    mCharacterArmourTexture(), mCharacterArmourSprite(mCharacterArmourTexture),
-    mCurrentFrame(0), mCurrentTime(0.f), mAnimationTime(0.5)
-{
-    if (!mCharacterTexture.loadFromFile("assets/characters/char_a_p1_0bas_humn_v00.png")) {
-        std::cout << "Character texture cannot be loaded!" << std::endl;
-    }
-    if (!mCharacterHairTexture.loadFromFile("assets/characters/char_a_p1_4har_bob1_v03.png")) {
-        std::cout << "Hair texture cannot be loaded!" << std::endl;
-    }
-    if (!mCharacterArmourTexture.loadFromFile("assets/characters/char_a_p1_1out_pfpn_v05.png")) {
-        std::cout << "Armour texture cannot be loaded! " << std::endl;
-    }
-};
+AnimationHandler::AnimationHandler(TextureManager& m_tex_mngr) :
+    mCurrentFrame(0), mCurrentTime(0.f), mAnimationTime(0.5),
+    mAnimationType(AnimationType::Idle), mMovementDirection(DirectionType::Right),
+    mTextureManager(m_tex_mngr),
+    mCharacterSprite(mTextureManager.get_texture<_tex_type::body>()._spr), 
+    mCharacterHairSprite(mTextureManager.get_texture<_tex_type::hair>()._spr), 
+    mCharacterArmourSprite(mTextureManager.get_texture<_tex_type::armour>()._spr)
+    {
+
+  
+    };
+
+void AnimationHandler::load_sprites_textures(){
+    
+    auto& body_texture = mTextureManager.get_texture<_tex_type::body>();
+    auto& hair_texture = mTextureManager.get_texture<_tex_type::hair>();
+    auto& armour_texture = mTextureManager.get_texture<_tex_type::armour>();
+
+    
+    mTextureManager.assign_sprite_texture(body_texture);
+        //std::cout << "tex_type; " << body_texture._tex_path << std::endl;
+    mTextureManager.assign_sprite_texture(hair_texture);
+        //std::cout << "tex_type; " << hair_texture._tex_path << std::endl;
+    mTextureManager.assign_sprite_texture(armour_texture);
+        //std::cout << "tex_type; " << armour_texture._tex_path << std::endl;
+
+    mCharacterSprite = mTextureManager.get_sprite(body_texture);
+    mCharacterHairSprite = mTextureManager.get_sprite(hair_texture);
+    mCharacterArmourSprite = mTextureManager.get_sprite(armour_texture);
+
+}   
 
 void AnimationHandler::AddAnimationSet(AnimationType aType, int startRow, int column, int width, int height, int startIndex) {
     //up
@@ -45,7 +60,81 @@ void AnimationHandler::UpdateAnimation(AnimationType type, DirectionType mMoveme
     mCurrentFrame = 0;
     mCurrentTime = 0;
     const auto& currentRectangle = animations[{type, mMovementDirection}][mCurrentFrame];
-    mCharacterSprite.setTextureRect(currentRectangle);
-    mCharacterHairSprite.setTextureRect(currentRectangle);
-    mCharacterArmourSprite.setTextureRect(currentRectangle);
+    // mTextureManager.mCharacterSprite.setTextureRect(currentRectangle);
+    // mTextureManager.mCharacterHairSprite.setTextureRect(currentRectangle);
+    // mTextureManager.mCharacterArmourSprite.setTextureRect(currentRectangle);
+    
+    mTextureManager.set_texture_rect(mTextureManager.get_texture<_tex_type::body>(), currentRectangle); //but which sprite?
+    mTextureManager.set_texture_rect(mTextureManager.get_texture<_tex_type::hair>(), currentRectangle);
+    mTextureManager.set_texture_rect(mTextureManager.get_texture<_tex_type::armour>(), currentRectangle);
+};
+
+
+void AnimationHandler::MovementAnimation(sf::Time& dt) {
+//this function should only be responsible for movementanimation but now it loads the sprite too.
+    if (mIsMoving) {
+        mStopTimer = 0;
+        // mAnimationHandler.mAnimationSpeed = 40.f / speed;
+        if (!mWasMoving) {
+            mAnimationTime = 0;
+            if (mCurrentFrame < animations[{mAnimationType, mMovementDirection}].size()) {
+                mCurrentFrame++;
+            }
+        }
+        else {
+
+            mAnimationTime += dt.asSeconds();
+            std::cout << "animation speed; " << mAnimationSpeed << " animation time; " << mAnimationTime << std::endl;
+
+            if (mAnimationTime >= mAnimationSpeed) {
+            //std::cout << "animation timer = " << mAnimationTime << std::endl;
+                mAnimationTime = 0;
+                mCurrentFrame++;
+            }  
+
+            /*
+            std::cout << "current frame; " << mCurrentFrame << std::endl;
+            std::cout << "animation type; " << typeid(mAnimationType).name() << std::endl;
+            std::cout << "movement direction; " << typeid(mMovementDirection).name() << std::endl;
+            std::cout << "animation vector size before; " << animations[{mAnimationType, mMovementDirection}].size() << std::endl;
+
+            these are empty here because the animation sets are loaded in player constructor and player constructor is called after
+            this file so this are now empty at the run time. 
+            */
+            
+            if (mCurrentFrame >= animations[{mAnimationType, mMovementDirection}].size())
+                mCurrentFrame = 0;
+
+            if (mCurrentFrame < animations[{mAnimationType, mMovementDirection}].size()) {
+                mCharacterSprite.setTextureRect(animations[{mAnimationType, mMovementDirection}][mCurrentFrame]);
+                mTextureManager.set_texture_rect(mTextureManager.get_texture<_tex_type::body>(), animations[{mAnimationType, mMovementDirection}][mCurrentFrame]);
+                //hair animation cycle
+                //mCharacterHairSprite.setTextureRect(animations[{mAnimationType, mMovementDirection}][mCurrentFrame]);
+                mTextureManager.set_texture_rect(mTextureManager.get_texture<_tex_type::hair>(), animations[{mAnimationType, mMovementDirection}][mCurrentFrame]);
+
+                //armour animation cycle
+                //mCharacterArmourSprite.setTextureRect(animations[{mAnimationType, mMovementDirection}][mCurrentFrame]);
+                mTextureManager.set_texture_rect(mTextureManager.get_texture<_tex_type::armour>(), animations[{mAnimationType, mMovementDirection}][mCurrentFrame]);
+
+            }
+            
+        }
+
+    }
+    else {
+
+        mStopTimer += dt.asSeconds();
+        if (mStopTimer >= 0.15)
+            mCurrentFrame = 0;
+        //thats why, these parts should not be there i guess. no actullay this are for the animation but i just need to predefine them one time before here. this is the first define thats why.
+
+        if (mCurrentFrame < animations[{mAnimationType, mMovementDirection}].size()) {
+            mTextureManager.set_texture_rect(mTextureManager.get_texture<_tex_type::body>(), animations[{mAnimationType, mMovementDirection}][mCurrentFrame]);
+            mTextureManager.set_texture_rect(mTextureManager.get_texture<_tex_type::hair>(), animations[{mAnimationType, mMovementDirection}][mCurrentFrame]);
+            mTextureManager.set_texture_rect(mTextureManager.get_texture<_tex_type::armour>(), animations[{mAnimationType, mMovementDirection}][mCurrentFrame]);
+        }
+
+    }
+
+    mWasMoving = mIsMoving;
 };
