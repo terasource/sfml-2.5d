@@ -66,3 +66,10 @@ so i just referenced animations class to player class and objects of player clas
 but now the issue is texturemanager.set_texture_rect(); this function doesnt work. i guess it should have been a wrapper for a sprite.settexturrect() but it doesnt work.
 
 with the sprite settexturerect function that i return from texturemanager with its wrapper functions working correctly but the function set_texture_rect() itself is not working.
+okay issues were object initialization order and object referencing.
+
+object initialization order was wrong and should be from texturemanager -> animations -> player.
+and also the player was copy assigning sprites instead referencing so there was 2 different sprites. settexturerect() functions which is from sf::sprite
+were editing the sprite that is drawed and the other set_texture_rect() is affecting different sprite which is not drawed so.
+what i have done was i just passed the sprites to player by reference from animations and to animations from texturemanager and in texturemanager class
+i initialized textures from its constructor not game.cpp. with this it is now distrubiting the texture all around the project.
