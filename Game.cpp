@@ -1,19 +1,19 @@
 #include <iostream>
 #include "Game.hpp"
-#include "player.hpp"
-#include "TileMap.hpp"
-#include "mapLoader.hpp"
-#include "probs.hpp"
 
 Game::Game() :
-    mPlayer(),
+    mTextureManager(),
+    mAnimationHandler(mTextureManager),
+    mPlayer(mTextureManager, mAnimationHandler),
     mBackGroundTexture(),
     mBackGround(mBackGroundTexture),
     mWindow(sf::VideoMode(mWindowSize), "myGame", sf::Style::Default),
     mFont("assets/fonts/arial.ttf"),
     mFpsText(mFont),
     mView(sf::FloatRect({ 0.f, 0.f }, sf::Vector2f(mWindowSize)))
-{
+{   
+    mAnimationHandler.load_sprites_textures();
+    mPlayer.initialize_sprites_textures();
     mWindow.setFramerateLimit(60);
 
     loadMapData(jsonpath, map);
@@ -48,7 +48,6 @@ void Game::run() {
             int fps = 1.0f / dt.asSeconds();
             mFpsText.setString("FPS: " + std::to_string(fps));
             std::cout << "{" << mPlayer.getPosition().x << " ," << mPlayer.getPosition().y << " }" << std::endl;
-            std::cout << "ticks/frame " << static_cast<double>(timePerTick.asSeconds()) * 60 << std::endl;
             fpsTimer = sf::Time::Zero;
         }
 
@@ -75,7 +74,7 @@ void Game::processEvent() {
 void Game::update(sf::Time dt) {
     mPlayer.update(dt, mWindow.hasFocus());
 
-    map.update(dt);
+    map.update(dt);                     
 }
 
 void Game::render() {
