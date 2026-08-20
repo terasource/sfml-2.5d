@@ -1,0 +1,68 @@
+okay now the texture manager works but not correctly. xd.
+
+the issue is now i can handle the textures from one class and its object and with distrubiting its references. but the issue now is i cant load the textures.
+when i start the game i have white square instead my character.
+i need to resolve this and then i will have good implementation of my texturemanager iguess. at least the first version of my texture manager. im sure i will later improve and optimize it.
+and im confident about it.
+
+
+now there is a bug and i cant see the way to solve it. the _texturelist map in the texturemanager.hpp is created not empty.
+
+when i call the load_texture the textures that i want to load are already loaded in the list but idk where and this makes the pair.second return false so idk
+
+why this happens tho.
+
+i solved it. it was because of std;:map [] operator. i was using to reach [] operator in list but i was doing this before loading textures so
+there is no key and [] operator were inserting into. i was lack of information so i got help from chatgpt tho. i didnt get codes but just a
+guidance.
+
+
+now another bug.
+im not sure but the movement animation is now not working
+the code blocks are not reaching i wrote some debug cout codes and they didnt execute.
+idk why and also sprites doesnt load.
+i need to resolve this.
+
+the typename on texturemanagerhpp _tex_type doesnt seperate the objects by their type. it seperates the objects by their runtime value.
+so i think this is a wrong implementation choice. they need to be seperated by their type not runtime values.
+
+
+and the map is no longer meets the requirements of the texturemanager. now the hair body and armour is a different typename. they need to be 
+holded by different vector cuz they cannot be mapped with the same key they need to be unique so.
+and the chatgpt gave me an idea;
+creating a template<t> texture_type but i think i already have texture<t> so i can add a vectors for its textures and sprites and with this
+i can put them into a tupple which i create in texturemanager and reach them with their typename i guess. i need to research this more.
+tomorrow... 19/08/2026
+
+
+
+20/08/2026
+
+now i created the tuple with vectors of the texture<T>s, and modified the load_texture, get_texture and get_sprite methods.
+what i have done so far is;
+
+1) i changed the return value of methods with the reference in order to avoid copying and reach the original objects in vectors.
+2) i use std::get<typename> method to get vectors and its textures. at first i was using std::get with <T> type but the T is usually
+typed as texture<_tex_type::body> or something related but i hold vectors in tuple so i cant reach the vectors with this so what i needed to do was
+just use std::get with std::vector<T> and the final statement was std::get<std::vector<T>>(_textureslist); with this expression i can get the vector of a 
+spesific texture and with its indexes i can reach the textures.
+later i need to add one more specifier in order to index the spesific different textures. but now i only have 1 texture so i just can return first index of vectors and thats it.
+
+the tuple was idea from chatgpt so i got some help from him but i think i fully understood the logic under the hood, and that makes sense.
+
+at 03:43
+i finally can load textures&sprites from the distrubitor that i choose. lets gooo. i can finally see my character on the screene. but the animations is now fucked.
+so i need to solve it.
+issue is on set_texture_rect at the first place. check it. i guess the texture rect is wrong or the applying order is wrong. probably on the 
+initialize_sprite_textures() on player or animationhandler files.
+
+the issue if probably the size of mAnimationHandler.load_sprites_textures(); its 0. so the animations are not loading.
+
+mAnimationHandler.animations.size() returns 12 so animations are loading but the type of animations are empty.
+
+okay so i think i solved the animation bug. first i think it was a empty animation list but then i noticed that the animation list wasnt empty i just
+checking the vector with wrong parameters. i load animation vector in player class but i was checking it on animations class and with animations class members.
+so i just referenced animations class to player class and objects of player class are referencing from animation class. which solved the problem mostly.
+but now the issue is texturemanager.set_texture_rect(); this function doesnt work. i guess it should have been a wrapper for a sprite.settexturrect() but it doesnt work.
+
+with the sprite settexturerect function that i return from texturemanager with its wrapper functions working correctly but the function set_texture_rect() itself is not working.

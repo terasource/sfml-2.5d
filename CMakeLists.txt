@@ -29,7 +29,13 @@ find_package(nlohmann_json REQUIRED)
 file(GLOB SOURCES "*.cpp")
 
 # --- Hedef (Executable) ---
-add_executable(game ${SOURCES})
+add_executable(game ${SOURCES}
+    collision.cpp
+    collision.hpp
+    texturemanager.cpp
+    texture.hpp
+    texture.cpp
+)
 
 # --- Kütüphaneleri Bağla (Linkle) ---
 target_link_libraries(game PRIVATE 

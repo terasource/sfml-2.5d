@@ -1,0 +1,38 @@
+the issue in the project design is breaking the srp rule.
+
+every file or class should only be responsible for its own mission. but now they are not.
+
+for example animations also loading the sprites and some functions of player. this should not be like this.
+i need to seperate this and also i need to setup a template texture class and texture manager in addition to template in order to
+manage the textures easily and scalable in the future.
+
+i also need to seperate animations and player classes player classes should be responsible of players attributes, movements or etc.
+and animations should only be responsible for adding animations etc.
+
+i also need to convert the animations.cpp into a template class and create a animationsmanager in order to control different kind of 
+animations easily and scalable as the same as texture and make it to be easy in the future.
+
+
+----
+05082026
+
+i figured out why the animations bug now is occur because i have 2 sprites 1 is on animations hpp and the other is player hpp this are 2 seperated sprites which their positions are same.
+i need to lower it to 1 and they should share it but how idk. prob i need to sprite manager.
+
+
+---
+
+06082026
+i just could not decide whether the texturemanager class should be template or not. my brain just like working it should not be a
+template class it should be general and responsible for all kind of textures that is gonna be hold in game like player, tile and etc.
+but i just could not figured it out how to do it because the texture class itself is template.
+
+i have 2 different approaches.
+|- making the base class template and it will be the same type as the texture object.
+|_ making the base class non-template general class and passing the texture with declaring its T with public using var_type = T; and pass with this type.
+
+idk which is the best approach tho i need to research it more and decide.
+
+and also i need to figure out how to determine a thing is an object or not? and if it is an object, how i am going to say that the 
+object has its collider and should be collide with other objects. i probably should give the object or obstacle a rectangle and 
+check its bounds with the source of collision.
