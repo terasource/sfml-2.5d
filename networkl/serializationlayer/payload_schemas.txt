@@ -1,0 +1,16 @@
+max_frame_size = 512b; // for now
+max_payload_size = max_frame_size - 4[length] - 1[type] = 507b;
+
+
+enum class messageType : std::uint8_t {
+    playerJoin = 0,
+    playerInput = 1,
+    playerState = 4,
+    playerChat = 2,
+    test_mix = 7
+};
+
+general schema = [[length][type][payload]]
+    playerJoin = [[timeStamp][playerName][joinMessage]];
+    playerInput = [[playerID][playerState][inputFlags]];
+    playerState = [[playeriD][player:position:x][player:position:y]];
