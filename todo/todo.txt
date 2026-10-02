@@ -1,0 +1,13 @@
+Crucial
+-----------
+i)in order to make physical or mathematical calculations consistent, accumulated time(dt) should be divided into fixed time steps
+instead of multiplying it directly 
+ii)move the fps calculations to run() after the fixed-time steps is implemented from the update(),
+because with the fixed-time steps update() will refer the tick rate not the frame per second.
+iii)use strongly typed enums instead of traditional enums. it is a better practice as i searched.
+
+
+-> collision detection.
+|-> AABB collision, tile-based collision.
+-> y-sorting / z-index
+-> map transtitions.

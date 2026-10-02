@@ -1,0 +1,5 @@
+1) add collision checking to the server. if character collided stop calculating. actually
+   the collision should be transferred to the server side.
+
+
+2) generalize the architecture for n client.
