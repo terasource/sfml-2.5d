@@ -1,0 +1,55 @@
+first bug is body armour and hair sprite is unsynchronized when they are collided. probably an order of setposition sprites bug.
+- this occurs because of collision.cpp i just check collision with the charactersprite and move only it so the other sprites cannot keep up.
+- but i also dont want to hardcode and code all the sprites seperately call their .move function. i just want 1 wrapper function and this iterates
+all sprites and call their .move() function. makes sense tho.
+
+
+
+
+second bug is more weird. when the top collision is working if i add movement to left while holding the top movement the top collision is broken and my character can pass into the wall while moonwalking to left. idk why same bug works in other directions too but only at the edges.
+yea its confirmed that the bug occurs because of the order of this if blocks.
+
+im not sure but maybe i can use this with adding more direction types and collision of them at edge corners.
+ill try and write here the results.
+
+    //yea its confirmed that the bug occurs because of the order of this if blocks.
+    //im now not sure if its because of the orders or actually for me and for my understanding on programming
+    //these if blocks are all should be working if their condition is true but they dont even if the condition is true.
+    // idk why but if i put top before the left then the left collision is broken when moving diagonally and idk why because the both condition should be working
+    // and this should be happening fast as the system would not let me to pass into but it does not.
+    // because of this i thought i can check digonal movement seperately but, i wasnt successfull at the first try but now it works...
+
+yeah now digonal collision is works and i know why. well i mean it is because i added 4 more diagonal check but i understood why it doesnt work correctly before at least as i expected.
+
+the if statements were working as i thought and there was no problem but the problem was i was understanding them uncorrectly. yeah the if states working
+
+when the top collision statement is satisfied and went into if block i set posiiton of sprite to pos_x, 0 which means i cant go upper anymore.
+but when i add left movement to this, the second if blocks executed and it sets the sprite's position to 0,pos_y which means i cant go left anymore but also can go to upper.
+there is where the bug occurs that i faced.
+
+//yeah this logic order causes a bug. when im applying the right screen collision and while pressing the d key, if i press s the bottom collision doesnt work till i release the s key.
+    //when i release it recalculates the positions but yeah when i holding it just goes out of bounds.
+    
+    -actually solved the bug. at first i thought it is because if statements and it was too but the problem were not if statements i just thought they are responsible. but the
+    responsible was editing state in every if statements and this makes side effects bigger. and what i did is actually first i added 4 more if statements for digonal movements
+    and the bug was solved by this but i just could not be sure so i asked chatgpt before asking when i writing the prompt i actually figured out why the bug happens and then asked to
+    get more ideas and information. why not?, and yes it goes like this and he told me that instead editing the state in every if i should edit the variables and values in if statements
+    and then finally when i get the correct values i should edit state one and last time. and this actually worked and the idea was really logical and i could not think this naturally. what a shame.
+    then he told me that the if blocks are doing what clamp function does so i converted them to clamp function kind of an abstraction but its okey. now it looks better.
+
+    then i tried to draw a rectangle for the bounds of the collider of the screen but i wasnt able to draw it to correct position on map.
+    i was drawing it based on screen coordinates but i didnt want this because it moves when i moves because of screen coordinates you know.
+    then i could not figure this out and asked him and he just told me that i need to draw it before changing the view of window to default view which is used for drawing something related to screen coordinates.
+    and yeah i did it now i can draw the collider rectangle bounds but they are not correctly represent themselves because rectangle starts at 0.0 but the map start at something negative like -60 so i need them to be
+    synchronized as i mention down below.
+
+    //i need to move the map a bit bottom. collision works i mean it doesnt go out of bounds unless the bug i mention above occurs.
+
+    //gotta make transform the screen size and map size and rectangle size and also coords. 
+    //size may be equal but the coords are not. the map starts from about -60 and ends at 900 i guess that equals to 960 but the map is actually ends at 860 or somewhere the tail of
+    //dinasour is out of maps xd. doesnt matter but the start points are different i should make them equal and probably going to edit maps start point and will pin it to 0,0.
+
+after i do these i need to find a way to represent objects in map to give them a collider. giving collider is easy part tho, i have to find how can i indicate to sprites props or something drawed on the map,
+that they are an object and should have a collider. i think i need to make this before drawing them actually while when im getting theirs gid or other properties i need to give them a collider at this time i guess for now.
+we will see.
+ 
