@@ -1,0 +1,8 @@
+want to start writing my own multiplayer protocol.
+i started researching and getting documents for it.
+actually i was planning to improve collision more before starting this but i think i cant wait.
+now i just excitedly want to do this, will look collision up later.
+
+ill note the results from researching down;
+
+1) its fucking hard...

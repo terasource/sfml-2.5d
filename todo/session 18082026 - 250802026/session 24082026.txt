@@ -1,0 +1,1 @@
+arrange the collider box in collidermanager.cpp screen collision get its position and modify it.
