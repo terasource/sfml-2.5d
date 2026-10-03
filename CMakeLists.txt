@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10)
 project(sfml-2.5d)
 
 # C++ Standart Ayarı
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # --- Windows Özel Ayarları ---
@@ -27,14 +27,50 @@ find_package(nlohmann_json REQUIRED)
 
 # --- Kaynak Dosyalar ---
 file(GLOB SOURCES "*.cpp")
+list(REMOVE_ITEM SOURCES 
+"${CMAKE_CURRENT_SOURCE_DIR}/client.cpp"
+"${CMAKE_CURRENT_SOURCE_DIR}/server.cpp"
+"${CMAKE_CURRENT_SOURCE_DIR}/server_exec.cpp"
+)
 
 # --- Hedef (Executable) ---
 add_executable(game ${SOURCES}
-    collision.cpp
-    collision.hpp
+    collisionmanager.cpp
+    collisionmanager.hpp
     texturemanager.cpp
     texture.hpp
     texture.cpp
+    collider.cpp
+    collider.hpp
+    playerState.cpp
+    playerState.hpp
+    inputHandler.hpp
+    inputHandler.cpp
+    networkl/serializationlayer/message.cpp
+    networkl/serializationlayer/message.hpp
+    networkl/serializationlayer/packetreader.cpp
+    networkl/serializationlayer/packetreader.hpp
+    networkl/serializationlayer/packetwriter.cpp
+    networkl/serializationlayer/packetwriter.hpp
+    input_types.hpp
+    server.cpp
+    server.hpp
+    client.cpp
+    client.hpp
+)
+
+add_executable(server_exec 
+    server_exec.cpp
+    server.hpp
+    server.cpp
+    networkl/serializationlayer/message.cpp
+    networkl/serializationlayer/message.hpp
+    networkl/serializationlayer/packetreader.cpp
+    networkl/serializationlayer/packetreader.hpp
+    networkl/serializationlayer/packetwriter.cpp
+    networkl/serializationlayer/packetwriter.hpp
+    playerState.hpp
+    playerState.cpp
 )
 
 # --- Kütüphaneleri Bağla (Linkle) ---
