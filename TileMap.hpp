@@ -8,7 +8,6 @@
 
 struct MapLayer {
     std::vector<sf::VertexArray> mVertices;
-
 };
 
 struct TilesetData {

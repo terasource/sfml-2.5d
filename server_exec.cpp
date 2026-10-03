@@ -34,15 +34,11 @@ int main() {
 
     while (running) {
 
-
-
-
         /*
-        int ret = poll(pollfds.data(), pollfds.size(), 0);
+            int ret = poll(pollfds.data(), pollfds.size(), 0);
 
         if (ret <= 0)
             continue;
-
 
         for (auto& pollfd : pollfds) {
 
@@ -69,12 +65,15 @@ int main() {
                         //this may cause double loop becasuse of the logic of recv_all. check it later.
         client.recv_buffer = server.recv_all(client.skt_fd, bytes_processed)[0];
 
-                     }
-                }
-            }
-        }
+    }
 
+}
+
+            }
+
+        }
         */
+
 
         std::cout << "server loop: " << server_loop << std::endl;
 

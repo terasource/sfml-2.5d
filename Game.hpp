@@ -1,12 +1,16 @@
 #pragma once
+#include <iostream>
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include "player.hpp"
 #include "TileMap.hpp"
 #include "probs.hpp"
 #include "mapLoader.hpp"
-#include "collision.hpp"
+#include "collisionmanager.hpp"
 #include "texturemanager.hpp"
+#include "server.hpp"
+#include "client.hpp"
+#include "inputHandler.hpp"
 
 class Game {
 public:
@@ -25,6 +29,16 @@ private:
   AnimationHandler mAnimationHandler;
   Player mPlayer;
 
+  std::vector<playerState> playerStateList;
+  playerState p_state;
+  inputHandler inputhandl;
+  Server server;
+  int listening_socket = 0;
+  Client client;
+  int client_socket = 0;
+  int bytes = 0;
+  CollisionManager mCollisionManager;
+
   static constexpr sf::Vector2u mWindowSize = { 960, 640 };
 
   sf::Clock mClock;
@@ -33,7 +47,7 @@ private:
   // this sets the physical engine's tickrate to 60. this determines to how many calculates should be performed within a second.
   static constexpr unsigned int updatesPerSecond = 60; 
   static constexpr sf::Time timePerTick = sf::seconds(1.0f / updatesPerSecond);
-  sf::Time lastFrameDrawed = sf::Time::Zero;
+  sf::Time simulationTime = sf::Time::Zero;
 
   sf::Time fpsTimer;
 

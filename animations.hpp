@@ -3,15 +3,9 @@
 #include <map>
 #include <vector>
 #include "texturemanager.hpp"
+#include "playerState.hpp"
 
 // turn into a template class for every animations.
-
-enum class DirectionType {
-    Up = 1,
-    Left = 3,
-    Down = 0,
-    Right = 2
-};
 
 enum class AnimationType {
     Idle,

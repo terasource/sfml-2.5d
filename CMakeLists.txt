@@ -59,6 +59,15 @@ add_executable(game ${SOURCES}
     client.hpp
 )
 
+# --- Kütüphaneleri Bağla (Linkle) ---
+target_link_libraries(game PRIVATE 
+    SFML::Graphics 
+    SFML::Window 
+    SFML::System 
+    SFML::Audio 
+    nlohmann_json::nlohmann_json
+)
+
 add_executable(server_exec 
     server_exec.cpp
     server.hpp
@@ -71,16 +80,7 @@ add_executable(server_exec
     networkl/serializationlayer/packetwriter.hpp
     playerState.hpp
     playerState.cpp
-)
-
-# --- Kütüphaneleri Bağla (Linkle) ---
-target_link_libraries(game PRIVATE 
-    SFML::Graphics 
-    SFML::Window 
-    SFML::System 
-    SFML::Audio 
-    nlohmann_json::nlohmann_json
-)
+    )
 
 # --- Asset Kopyalama (Opsiyonel ama Tavsiye Edilir) ---
 # Derleme sonrası asset klasörünü build içine kopyalar ki oyun çalışınca resimleri bulabilsin.

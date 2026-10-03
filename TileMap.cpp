@@ -77,6 +77,12 @@ void TileMap::buildMap(std::vector<int>& mapData, int width, int height) {
             quad[2].position = sf::Vector2f({ (i + 1) * x, (j + 1) * y });
             quad[3].position = sf::Vector2f({ i * x, (j + 1) * y });
 
+            //offset to slide map
+            sf::Vector2f offset = {0, 0};
+            
+            for(int i = 0; i < 4; i++)
+                quad[i].position += offset;
+
             quad[0].texCoords = sf::Vector2f({ row * x, column * y });
             quad[1].texCoords = sf::Vector2f({ (row + 1) * x, column * y });
             quad[2].texCoords = sf::Vector2f({ (row + 1) * x, (column + 1) * y });
@@ -91,10 +97,11 @@ void TileMap::buildMap(std::vector<int>& mapData, int width, int height) {
             newLayer.mVertices[textureIndex].append(quad[3]);
             newLayer.mVertices[textureIndex].append(quad[0]);
 
+                
+            }
+           
         }
-    }
     mapLayers.push_back(newLayer);
-
 }
 
 void TileMap::update(sf::Time dt) {

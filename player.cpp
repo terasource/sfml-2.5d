@@ -1,4 +1,5 @@
 #include "player.hpp"
+#include <random>
 
 //refactor with relative positions to charactor for its childs. sceneNode
 //consider the player as entity and turn into a entity class.  
@@ -33,11 +34,11 @@ Player::Player(TextureManager& m_tex_mngr, AnimationHandler& m_anim_handl) :
     int startIndex = 5;
     mAnimationHandler.AddAnimationSet(AnimationType::Run, 4, 8, 64, 64, startIndex); // 4 is startRow for runninganimation, direction is down, startColumn is 5
 
+    
 };
 
 void Player::initialize_sprites_textures(){
 
-    
     //positions and scales
     //character
     mCharacterSprite.setScale(mDefaultScale);
@@ -46,40 +47,58 @@ void Player::initialize_sprites_textures(){
     mCharacterHairSprite.setScale(mDefaultScale);
     //armour
     mCharacterArmourSprite.setScale(mDefaultScale);
-    
-    
+
     mCharacterSprite.setTextureRect(mAnimationHandler.animations[{mAnimationType, mMovementDirection}][mAnimationHandler.mCurrentFrame]);
     mCharacterHairSprite.setTextureRect(mAnimationHandler.animations[{mAnimationType, mMovementDirection}][mAnimationHandler.mCurrentFrame]);
     mCharacterArmourSprite.setTextureRect(mAnimationHandler.animations[{mAnimationType, mMovementDirection}][mAnimationHandler.mCurrentFrame]);
 
+    mCollider.set_bounds(mCharacterSprite.getGlobalBounds());
+    mCollider.set_drawstate(true);
 };
 
 
-/*
+
 sf::FloatRect Player::GetCharacterHitbox() {
     auto pos = mCharacterSprite.getPosition();
 
-    return sf::FloatRect({ pos.x + 20, pos.y + 25 }, { 15, 15 });
+    return sf::FloatRect({ pos.x + 20, pos.y + 25 }, { 20, 25 });
 };
-*/
 
 
-void Player::update(sf::Time& dt, bool hasFocus) {
+void Player::applyState(playerState p_state){
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<float> distrib(1.0f, 300.0f);
+
+    float randnum = 0;
+
+    //localstate.set_player_position({randnum, randnum});
+    auto pos = p_state.get_player_position();
+    sf::Vector2f cpos{pos.x, pos.y};
+    //std::cout << "x: " << cpos.x << "y: " << cpos.y << std::endl;
+    mCharacterSprite.setPosition(cpos);
+}
+
+void Player::update(sf::Time& dt, bool hasFocus, playerState p_state) {
 
     this->dt = dt;
-    HandleInput(hasFocus);
+    //applyState(hasFocus);
 
     IdleAnimation();
 
-    auto movementFactor = movement;
-    //separate this animationhandler only handle the animations not the main character sprite.
-    mCharacterSprite.move(movementFactor);
-    
+    applyState(p_state);
+
+    //mTextureManager.move_all_sprites(movement);
     auto characterPosition = mCharacterSprite.getPosition();
+    mTextureManager.setposition_all_sprites(characterPosition);
+    mCollider.set_position(characterPosition);
+
+
+    //mCharacterSprite.move(movementFactor);    
+    //separate this animationhandler only handle the animations not the main character sprite.
+    
     //std::cout << "movement factor = {x: " << movementFactor.x << " y: "<< movementFactor.y << " }" <<std::endl;
     //std::cout << "character position  = {x: " << characterPosition.x << " y: "<< characterPosition.y << " }" <<std::endl;
-    mCharacterHairSprite.setPosition(characterPosition);
-    mCharacterArmourSprite.setPosition(characterPosition);
 
      
     /*
@@ -93,71 +112,13 @@ void Player::update(sf::Time& dt, bool hasFocus) {
 };
 
 void Player::draw(sf::RenderWindow& mWindow) {
+   
     mWindow.draw(mCharacterSprite);
     mWindow.draw(mCharacterHairSprite);
     mWindow.draw(mCharacterArmourSprite);
+
+    mWindow.draw(mCollider);
 };
-
-void Player::HandleInput(bool hasFocus) {
-
-    mAnimationHandler.mIsMoving = false;
-    movement = { 0,0 };
-
-    if (!hasFocus) {
-        movement = { 0,0 };
-        mAnimationHandler.mIsMoving = false;
-        mAnimationType = AnimationType::Idle;
-
-        return;
-    }
-
-
-    if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) {
-        mAnimationType = AnimationType::Walk;
-        speed = 4.0f;
-        mAnimationHandler.mAnimationSpeed = 0.10f;
-    }
-    else {
-        speed = 6.0f;
-        mAnimationHandler.mAnimationSpeed = 0.10f;
-        if (!(mAnimationType == AnimationType::Run)) {
-            mAnimationType = AnimationType::Run;
-            mAnimationHandler.UpdateAnimation(mAnimationType, mMovementDirection);
-        }
-    }
-
-
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
-        movement.y -= speed;
-        mMovementDirection = DirectionType::Up;
-         mAnimationHandler.mIsMoving = true;
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
-        movement.x -= speed;
-        mMovementDirection = DirectionType::Left;
-         mAnimationHandler.mIsMoving = true;
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
-        movement.y += speed;
-        mMovementDirection = DirectionType::Down;
-         mAnimationHandler.mIsMoving = true;
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
-        movement.x += speed;
-        mMovementDirection = DirectionType::Right;
-         mAnimationHandler.mIsMoving = true;
-    }
-
-    //check the difference between these 2.
-    float magnitude = std::sqrt((movement.x * movement.x) + (movement.y * movement.y));
-    double mag2d = std::hypot(movement.x, movement.y); 
-    if (magnitude > 0) {
-        movement.x /= mag2d;
-        movement.y /= mag2d;
-        
-        movement *= speed;
-    }
-}
 
 void Player::IdleAnimation() {
     if (! mAnimationHandler.mIsMoving && mAnimationHandler.mStopTimer > 0.5)
@@ -169,8 +130,11 @@ void Player::IdleAnimation() {
 
 sf::Vector2f Player::getPosition() {
     auto pos = mCharacterSprite.getPosition();
-
+    
     return { pos.x, pos.y };
 }
 
+void Player::print_pos(){
+    std::cout << "character pos; " << "{" << getPosition().x << " ," << getPosition().y << " }" << std::endl;
+}
 

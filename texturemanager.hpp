@@ -61,8 +61,9 @@ class TextureManager{
     public:    
     TextureManager();
     void initialize_textures_sprites();
-
-
+    void move_all_sprites(sf::Vector2f movement);
+    void setposition_all_sprites(sf::Vector2f position);
+    
     void change_texture(texture<_tex_type> texture, sf::Texture& tex) noexcept;
     //add a function to set texturerect of a sprite for animations.
     void set_texture_rect(texture<_tex_type> texture ,sf::IntRect rect);
