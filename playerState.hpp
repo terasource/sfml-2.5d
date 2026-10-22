@@ -11,20 +11,20 @@ enum class DirectionType {
     Right = 0
 };
 
-struct position{
+struct position {
     float x;
     float y;
 };
 
-class playerState{
+class playerState {
 
-    public:
-        std::string name;
-        unsigned int id;
-        position playerpos;
-        DirectionType direction;
-    
-    public:
+public:
+    std::string name;
+    uint8_t id;
+    position playerpos;
+    DirectionType direction;
+
+public:
     playerState() = default;
     playerState(unsigned int player_id, float pl_pos_x, float pl_pos_y);
     position& get_player_position();
