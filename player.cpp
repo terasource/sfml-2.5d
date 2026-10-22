@@ -3,16 +3,16 @@
 
 //refactor with relative positions to charactor for its childs. sceneNode
 //consider the player as entity and turn into a entity class.  
-Player::Player(TextureManager& m_tex_mngr, AnimationHandler& m_anim_handl) :
+Player::Player(uint8_t id, playerState player_state, TextureManager& m_tex_mngr, AnimationHandler& m_anim_handl) :
     mDefaultPosition(300.f, 300.f), mDefaultScale({ 2.5f, 2.5f }),
     speed(300.f),
     mAnimationType(m_anim_handl.mAnimationType),
     mMovementDirection(m_anim_handl.mMovementDirection),
     mTextureManager(m_tex_mngr), mAnimationHandler(m_anim_handl),
-    mCharacterArmourSprite(m_anim_handl.mCharacterArmourSprite), 
-    mCharacterHairSprite(m_anim_handl.mCharacterHairSprite), 
+    mCharacterArmourSprite(m_anim_handl.mCharacterArmourSprite),
+    mCharacterHairSprite(m_anim_handl.mCharacterHairSprite),
     mCharacterSprite(m_anim_handl.mCharacterSprite)
-    {
+{
     //texture should has its own manager. implement a texturemanager to load texture sprites etc.
     /*
        if (!mCharacterTexture.loadFromFile("assets/characters/char_a_p1_0bas_humn_v00.png")) {
@@ -24,8 +24,8 @@ Player::Player(TextureManager& m_tex_mngr, AnimationHandler& m_anim_handl) :
         if (!mCharacterArmourTexture.loadFromFile("assets/characters/char_a_p1_1out_pfpn_v05.png")) {
         std::cout << "Armour texture cannot be loaded! " << std::endl;
             }
-    */ 
-    
+    */
+
     //idle animation
     mAnimationHandler.AddAnimationSet(AnimationType::Idle, 0, 1, 64, 64); // 0 is startRow for idle animation, direction is down
     //walking animation
@@ -34,10 +34,19 @@ Player::Player(TextureManager& m_tex_mngr, AnimationHandler& m_anim_handl) :
     int startIndex = 5;
     mAnimationHandler.AddAnimationSet(AnimationType::Run, 4, 8, 64, 64, startIndex); // 4 is startRow for runninganimation, direction is down, startColumn is 5
 
-    
+    set_player_id(id);
+    set_player_state(player_state);
 };
 
-void Player::initialize_sprites_textures(){
+void Player::set_player_id(uint8_t player_id) {
+    my_character_id = player_id;
+}
+
+int Player::get_player_id() const {
+    return my_character_id;
+}
+
+void Player::initialize_sprites_textures() {
 
     //positions and scales
     //character
@@ -45,7 +54,7 @@ void Player::initialize_sprites_textures(){
     mCharacterSprite.setPosition(mDefaultPosition);
     //hair
     mCharacterHairSprite.setScale(mDefaultScale);
-    //armour
+    //armour    
     mCharacterArmourSprite.setScale(mDefaultScale);
 
     mCharacterSprite.setTextureRect(mAnimationHandler.animations[{mAnimationType, mMovementDirection}][mAnimationHandler.mCurrentFrame]);
@@ -65,42 +74,37 @@ sf::FloatRect Player::GetCharacterHitbox() {
 };
 
 
-void Player::applyState(playerState p_state){
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_real_distribution<float> distrib(1.0f, 300.0f);
+void Player::applyState() {
 
-    float randnum = 0;
+    auto pos = localstate.get_player_position();
 
-    //localstate.set_player_position({randnum, randnum});
-    auto pos = p_state.get_player_position();
-    sf::Vector2f cpos{pos.x, pos.y};
-    //std::cout << "x: " << cpos.x << "y: " << cpos.y << std::endl;
+    sf::Vector2f cpos{ pos.x, pos.y };
+
+    //std::cout << "x: " << pos.x << "y: " << pos.y << std::endl;
     mCharacterSprite.setPosition(cpos);
+    mCharacterArmourSprite.setPosition(cpos);
+    mCharacterHairSprite.setPosition(cpos);
 }
 
-void Player::update(sf::Time& dt, bool hasFocus, playerState p_state) {
+
+void Player::update(sf::Time& dt, bool hasFocus) {
 
     this->dt = dt;
     //applyState(hasFocus);
-
     IdleAnimation();
-
-    applyState(p_state);
-
-    //mTextureManager.move_all_sprites(movement);
+    applyState();
     auto characterPosition = mCharacterSprite.getPosition();
-    mTextureManager.setposition_all_sprites(characterPosition);
+    //mTextureManager.setposition_all_sprites(characterPosition);
     mCollider.set_position(characterPosition);
-
+    //mTextureManager.move_all_sprites(movement);
 
     //mCharacterSprite.move(movementFactor);    
     //separate this animationhandler only handle the animations not the main character sprite.
-    
+
     //std::cout << "movement factor = {x: " << movementFactor.x << " y: "<< movementFactor.y << " }" <<std::endl;
     //std::cout << "character position  = {x: " << characterPosition.x << " y: "<< characterPosition.y << " }" <<std::endl;
 
-     
+
     /*
     std::cout << "current frame; " << mAnimationHandler.mCurrentFrame << std::endl;
             std::cout << "animation type; " << typeid(mAnimationType).name() << std::endl;
@@ -112,7 +116,7 @@ void Player::update(sf::Time& dt, bool hasFocus, playerState p_state) {
 };
 
 void Player::draw(sf::RenderWindow& mWindow) {
-   
+
     mWindow.draw(mCharacterSprite);
     mWindow.draw(mCharacterHairSprite);
     mWindow.draw(mCharacterArmourSprite);
@@ -121,7 +125,7 @@ void Player::draw(sf::RenderWindow& mWindow) {
 };
 
 void Player::IdleAnimation() {
-    if (! mAnimationHandler.mIsMoving && mAnimationHandler.mStopTimer > 0.5)
+    if (!mAnimationHandler.mIsMoving && mAnimationHandler.mStopTimer > 0.5)
     {
         mAnimationType = AnimationType::Idle;
         mAnimationHandler.UpdateAnimation(mAnimationType, mMovementDirection);
@@ -130,11 +134,18 @@ void Player::IdleAnimation() {
 
 sf::Vector2f Player::getPosition() {
     auto pos = mCharacterSprite.getPosition();
-    
+
     return { pos.x, pos.y };
 }
 
-void Player::print_pos(){
+void Player::print_pos() {
     std::cout << "character pos; " << "{" << getPosition().x << " ," << getPosition().y << " }" << std::endl;
 }
 
+void Player::set_player_state(playerState& player_state) {
+    localstate = player_state;
+}
+
+playerState Player::get_player_state() {
+    return localstate;
+}

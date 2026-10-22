@@ -13,7 +13,7 @@ std::shared_ptr<texture<_tex_type>> TextureManager::get_texture(){
 };
 */
 
-void TextureManager::initialize_textures_sprites(){
+void TextureManager::initialize_textures_sprites() {
 
     load_texture<texture<_tex_type::body>>("assets/characters/char_a_p1_0bas_humn_v00.png");
 
@@ -23,48 +23,34 @@ void TextureManager::initialize_textures_sprites(){
 
 }
 
-void TextureManager::move_all_sprites(sf::Vector2f movement){
+void TextureManager::move_all_sprites(sf::Vector2f movement) {
 
     //idea was from me but the implementation was from chatgpt cause i could not figure how to do this out.
     std::apply([&](auto&&... args) {
 
-            auto move_vec = [&](auto& vec){
-                for(auto& tex : vec)
-                    tex._spr.move(movement);
+        auto move_vec = [&](auto& vec) {
+            for (auto& tex : vec)
+                tex._spr.move(movement);
             };
 
-            (move_vec(args), ...);
+        (move_vec(args), ...);
 
         }, _textureslist);
 
-    /*
-        std::apply([&](auto&... args){
-        
-        ([&](auto& vec){
-             for(auto& tex : vec)
-                tex._spr.move(movement);
-            }(args), ...);
 
-        }, _textureslist);
-
-        //tried to write it by scratch with myself understanding what is going on here and how to use all these parameter packing and folding mechanims.
-        i just needed to research how to pass parameter into lambda function just after its definition from stackoverflow but it was simple. the lambda object
-        returns a function so i just need to do [](){body; } () like lamda_func(parameter); 
-        but im going to use the version placed above because it is more clear and readable.
-    */
-    
+    // = _textureslist[0-(size-1)].move(movement)
 }
 
-void TextureManager::setposition_all_sprites(sf::Vector2f position){
+void TextureManager::setposition_all_sprites(sf::Vector2f position) {
 
-    std::apply([&](auto&&... args){
-        auto set_pos = [&](auto& vec){
-            for(auto& tex : vec)
+    std::apply([&](auto&&... args) {
+        auto set_pos = [&](auto& vec) {
+            for (auto& tex : vec)
                 tex._spr.setPosition(position);
-        };
+            };
 
         (set_pos(args), ...);
 
-    }, _textureslist);
-   
+        }, _textureslist);
+
 }

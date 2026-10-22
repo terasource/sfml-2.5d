@@ -13,16 +13,9 @@ AnimationHandler::AnimationHandler(TextureManager& m_tex_mngr) :
     mCharacterHairSprite(mTextureManager.get_texture<_tex_type::hair>()._spr),
     mCharacterArmourSprite(mTextureManager.get_texture<_tex_type::armour>()._spr)
 {
-
-
-};
-
-void AnimationHandler::load_sprites_textures() {
-
     auto& body_texture = mTextureManager.get_texture<_tex_type::body>();
     auto& hair_texture = mTextureManager.get_texture<_tex_type::hair>();
     auto& armour_texture = mTextureManager.get_texture<_tex_type::armour>();
-
 
     mTextureManager.assign_sprite_texture(body_texture);
     //std::cout << "tex_type; " << body_texture._tex_path << std::endl;
@@ -34,6 +27,27 @@ void AnimationHandler::load_sprites_textures() {
     mCharacterSprite = mTextureManager.get_sprite(body_texture);
     mCharacterHairSprite = mTextureManager.get_sprite(hair_texture);
     mCharacterArmourSprite = mTextureManager.get_sprite(armour_texture);
+
+};
+
+void AnimationHandler::load_sprites_textures() {
+
+    /*
+auto& body_texture = mTextureManager.get_texture<_tex_type::body>();
+    auto& hair_texture = mTextureManager.get_texture<_tex_type::hair>();
+    auto& armour_texture = mTextureManager.get_texture<_tex_type::armour>();
+
+    mTextureManager.assign_sprite_texture(body_texture);
+    //std::cout << "tex_type; " << body_texture._tex_path << std::endl;
+    mTextureManager.assign_sprite_texture(hair_texture);
+    //std::cout << "tex_type; " << hair_texture._tex_path << std::endl;
+    mTextureManager.assign_sprite_texture(armour_texture);
+    //std::cout << "tex_type; " << armour_texture._tex_path << std::endl;
+
+    mCharacterSprite = mTextureManager.get_sprite(body_texture);
+    mCharacterHairSprite = mTextureManager.get_sprite(hair_texture);
+    mCharacterArmourSprite = mTextureManager.get_sprite(armour_texture);
+    */
 
 }
 
