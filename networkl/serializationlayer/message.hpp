@@ -8,8 +8,29 @@
 #include "functional"
 #include "packetwriter.hpp"
 #include "packetreader.hpp"
+#include "playerState.hpp"
+
+
+struct payloads {
+
+    struct playerJoin {
+        uint32_t timestamp;
+        uint8_t id;
+        float x;
+        float y;
+        std::string joinMessage;
+    };
+
+    struct playerInput {
+        uint8_t inputflag;
+    };
+
+};
+
+
 
 enum class messageType : std::uint8_t {
+    playerID = 5,
     playerJoin = 0,
     playerInput = 1,
     playerState = 4,
@@ -17,21 +38,16 @@ enum class messageType : std::uint8_t {
     test_mix = 7
 };
 
-struct payloadSchemas {
-
-};
-
-enum class inputSnapshot {
-
-};
 
 class Message {
 private:
     std::vector<std::uint8_t> buffer;
-    //std::size_t offset = 0;
+
     std::uint32_t size = 0;
+
     std::uint32_t length = 0;
-    messageType type;
+    messageType _type;
+
     PacketWriter writer;
     PacketReader reader;
     std::string payload;
@@ -40,7 +56,9 @@ private:
 public:
     //Message();
     Message(messageType type);
-    Message(const Message&) = delete;
+
+    //look about this after
+    //Message(const Message&) = delete;
     Message& operator =(Message&) = delete;
     void write(std::uint8_t message);
     void write(std::uint32_t message);
@@ -48,6 +66,13 @@ public:
     void write(float message);
 
     void finalize();
-    std::vector<std::uint8_t> read();
+    Message& read();
+    playerState readps();
+    payloads::playerInput readpi();
+    payloads::playerJoin readpj();
+    uint8_t readpid();
+    void print();
     const std::vector<std::uint8_t>& data() const;
+    const messageType& type() const;
+
 };

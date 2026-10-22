@@ -13,6 +13,7 @@ std::uint8_t PacketReader::read_uint8() {
     // the vector is aa bb cc dd and we want to read from start to end so.
     // returns the offset index and increase offset by 1.
 
+
     return buffer[offset++];
 }
 

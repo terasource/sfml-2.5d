@@ -10,7 +10,10 @@ enum class messageType : std::uint8_t {
     test_mix = 7
 };
 
-general schema = [[length][type][payload]]
-    playerJoin = [[timeStamp][playerName][joinMessage]];
-    playerInput = [[playerID][playerState][inputFlags]];
+general schema = [[length(uint32)][type(uint8)][payload]]
+
+    --payloads
+    playerJoin = [[playerID][timeStamp][playerName][joinMessage]];
+    playerInput = [[clientid][inputFlags]];
     playerState = [[playeriD][player:position:x][player:position:y]];
+    (?)playerStateVector = [[vectorCount:3][vectorSize(?fixed)][vec1][vec2][vec3]] // maybe vectorsize is not necessarry because it is fixed for every vector.
