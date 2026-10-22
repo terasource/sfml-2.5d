@@ -3,8 +3,11 @@ cmake_minimum_required(VERSION 3.10)
 project(sfml-2.5d)
 
 # C++ Standart Ayarı
+
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 
 # --- Windows Özel Ayarları ---
 # Eğer Windows'taysan kütüphanelerin yerini buraya yazmalısın.
@@ -80,7 +83,15 @@ add_executable(server_exec
     networkl/serializationlayer/packetwriter.hpp
     playerState.hpp
     playerState.cpp
-    )
+)
+
+target_include_directories(game PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+target_include_directories(server_exec PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+)
 
 # --- Asset Kopyalama (Opsiyonel ama Tavsiye Edilir) ---
 # Derleme sonrası asset klasörünü build içine kopyalar ki oyun çalışınca resimleri bulabilsin.
