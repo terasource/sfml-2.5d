@@ -4,10 +4,10 @@
 #include "input_types.hpp"
 
 
-class inputHandler{
-    private:
-        //std::uint8_t movementFlag = 0;
+class inputHandler {
+private:
+    //std::uint8_t movementFlag = 0;
 
-    public:
-        std::uint8_t collectInput();
+public:
+    std::uint8_t collectInput();
 };
