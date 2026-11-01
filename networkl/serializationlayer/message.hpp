@@ -8,7 +8,7 @@
 #include "functional"
 #include "packetwriter.hpp"
 #include "packetreader.hpp"
-#include "playerState.hpp"
+#include "player/playerState.hpp"
 
 
 struct payloads {
@@ -66,7 +66,7 @@ public:
     void write(float message);
 
     void finalize();
-    Message& read();
+    Message read();
     playerState readps();
     payloads::playerInput readpi();
     payloads::playerJoin readpj();

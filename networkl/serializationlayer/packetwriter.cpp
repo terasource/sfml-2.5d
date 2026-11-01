@@ -49,7 +49,7 @@ void PacketWriter::write_uint32_at(int index, std::uint32_t value) {
 
 void PacketWriter::write_string(const std::string& value) {
 
-        for (int i = 0; i < value.size(); i++)
+        for (size_t i = 0; i < value.size(); i++)
                 // where a char takes 8 bits. it can be casted as uint8_t.
                 buffer.push_back(static_cast<uint8_t>(value[i]));
 }

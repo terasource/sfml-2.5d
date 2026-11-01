@@ -113,15 +113,15 @@ payloads::playerJoin Message::readpj() {
     PacketReader pr(buffer);
 
     //headers
-    int length = pr.read_uint32();
-    int type = pr.read_uint8();
+    pr.read_uint32(); //length
+    pr.read_uint8(); //type
 
     playerjoin.id = pr.read_uint8();
     playerjoin.x = pr.read_float();
     playerjoin.y = pr.read_float();
     //playerjoin.timestamp = pr.read_uint32();
 
-    int string_msg_length = length - 1 - 4; // payloadlength - id - timestamp
+    //int string_msg_length = length - 1 - 4; // payloadlength - id - timestamp
 
     //playerjoin.joinMessage = pr.read_string(string_msg_length);
 
@@ -129,7 +129,7 @@ payloads::playerJoin Message::readpj() {
 }
 
 
-Message& Message::read() {
+Message Message::read() {
 
     Message msg(messageType::playerState);
 
@@ -139,8 +139,12 @@ Message& Message::read() {
 void Message::print() {
 
     switch (_type) {
-    case messageType::test_mix:
 
+    case messageType::test_mix:
+        break;
+    case messageType::playerID:
+        std::cout << "not done yet in message cpp" << std::endl;
+        break;
 
     case messageType::playerInput:
         std::cout
@@ -158,7 +162,16 @@ void Message::print() {
             << reader.read_uint8() << "pos-x: "
             << reader.read_float() << "pos-y: "
             << reader.read_float() << std::endl;
+        break;
+
+    case messageType::playerJoin:
+        std::cout << "not done yet in message cpp" << std::endl;
+        break;
+    case messageType::playerChat:
+        std::cout << "not done yet in message cpp" << std::endl;
+        break;
     }
+
 
 }
 
