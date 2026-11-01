@@ -2,15 +2,15 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <vector>
-#include "player.hpp"
-#include "TileMap.hpp"
-#include "probs.hpp"
-#include "mapLoader.hpp"
-#include "collisionmanager.hpp"
-#include "texturemanager.hpp"
-#include "server.hpp"
-#include "client.hpp"
-#include "inputHandler.hpp"
+#include "player/player.hpp"
+#include "map/TileMap.hpp"
+#include "map/probs.hpp"
+#include "map/mapLoader.hpp"
+#include "player/collisionmanager.hpp"
+#include "texture/texturemanager.hpp"
+#include "networkl/server/server.hpp"
+#include "networkl/client/client.hpp"
+#include "networkl/client/inputHandler.hpp"
 #include <bits/stdc++.h>
 #include <algorithm>
 
@@ -25,6 +25,7 @@ private:
   void render();
 
   TextureManager mTextureManager;
+  SpriteManager mSpriteManager;
 
   TileMap map;
   TileAnimation animations;
@@ -59,13 +60,12 @@ private:
 
   sf::RenderWindow mWindow;
   sf::View mView;
-  sf::Sprite mBackGround;
-  sf::Texture mBackGroundTexture;
+
   sf::Font mFont;
   sf::Text mFpsText;
 
   probs mProbs;
-
-  std::string jsonpath = "assets\\Sample map.json";
+  bool moveState = false;
+  std::string jsonpath = "assets//Sample map.json";
 
 };
