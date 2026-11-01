@@ -1,0 +1,3 @@
+fix animations bugs for all clients. now it crashes because the animation starts with idle type and
+idle type animation has only 1 frame when i try to walk i get vector out of bonds.
+add some checks for different kind of animation types and make it work.
